@@ -229,6 +229,9 @@ var pan = document.getElementById("play");
 pan.addEventListener("click", panView);
 
 function panView() {
+    for (var i = 0; i < timeouts.length; i++) {
+        clearTimeout(timeouts[i]);
+    }
     timeouts.push(setTimeout(popMapWithYear, 0000, 1976));
     timeouts.push(setTimeout(popMapWithYear, 0000, 1976));
     timeouts.push(setTimeout(popMapWithYear, 1000, 1980));
