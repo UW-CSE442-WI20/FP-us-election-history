@@ -46,6 +46,8 @@ for (var i = 0; i < obj.length; i++) {
     candidateMap.set(year, partyMap);
 }
 
+var timeouts = [];
+
 
 //console.log(map);
 
@@ -127,6 +129,10 @@ function populateMap() {
 }
 
 function sliderChange(val){
+    for (var i = 0; i < timeouts.length; i++) {
+        clearTimeout(timeouts[i]);
+    }
+
     d3.select('#title-container').text("US Election Results in "+d3.timeFormat('%Y')(sliderTime.value()));
     var currentYear = sliderTime.value().getYear() + 1900;
   	  d3.select('#key-title').text("Major Candidates (Winner in Bold)");
@@ -159,6 +165,8 @@ sliderChange();
 // panoramic view logic
 function popMapWithYear(currentYear) {
     var sampleData ={};	/* Sample random data. */	
+    let titleVar = document.getElementById("title-container");
+    titleVar.innerHTML = "US Election Results in " + currentYear;
 
     //var currentYear = sliderTime.value().getYear() + 1900;
     //console.log(currentYear);
@@ -221,19 +229,18 @@ var pan = document.getElementById("play");
 pan.addEventListener("click", panView);
 
 function panView() {
-    //console.log("pan button clicked");
-    setTimeout(popMapWithYear, 0000, 1976);
-    //sliderTime.setValue(1980);
-    setTimeout(popMapWithYear, 1000, 1980);
-    setTimeout(popMapWithYear, 2000, 1984);
-    setTimeout(popMapWithYear, 3000, 1988);
-    setTimeout(popMapWithYear, 4000, 1992);
-    setTimeout(popMapWithYear, 5000, 1996);
-    setTimeout(popMapWithYear, 6000, 2000);
-    setTimeout(popMapWithYear, 7000, 2004);
-    setTimeout(popMapWithYear, 8000, 2008);
-    setTimeout(popMapWithYear, 9000, 2012);
-    setTimeout(popMapWithYear, 10000, 2016);
+    timeouts.push(setTimeout(popMapWithYear, 0000, 1976));
+    timeouts.push(setTimeout(popMapWithYear, 0000, 1976));
+    timeouts.push(setTimeout(popMapWithYear, 1000, 1980));
+    timeouts.push(setTimeout(popMapWithYear, 2000, 1984));
+    timeouts.push(setTimeout(popMapWithYear, 3000, 1988));
+    timeouts.push(setTimeout(popMapWithYear, 4000, 1992));
+    timeouts.push(setTimeout(popMapWithYear, 5000, 1996));
+    timeouts.push(setTimeout(popMapWithYear, 6000, 2000));
+    timeouts.push(setTimeout(popMapWithYear, 7000, 2004));
+    timeouts.push(setTimeout(popMapWithYear, 8000, 2008));
+    timeouts.push(setTimeout(popMapWithYear, 9000, 2012));
+    timeouts.push(setTimeout(popMapWithYear, 10000, 2016));
 }
 /*pan.addEventListener("click", function(){
     setInterval(function(){
