@@ -55,6 +55,7 @@ for (var i = 0; i < obj.length; i++) {
 //console.log(sliderTime.value().getYear() + 1900);
 function tooltipHtml(n, d){	/* function to create html content string in tooltip div. */
     return "<h4>"+n+"</h4><table>"+
+        "<tr><td>Party</td><td>"+"Vote (Pct.)"+"</td></tr>"+
         "<tr><td>Democrat</td><td>"+(d.low)+"</td></tr>"+
         "<tr><td>Republican</td><td>"+(d.high)+"</td></tr>"+
         "<tr><td>Other</td><td>"+(d.avg)+"</td></tr>"+
@@ -65,70 +66,65 @@ const title = document.getElementById('title-container').addEventListener('chang
 
 function populateMap() {
 
-    var sampleData ={};	/* Sample random data. */	
+    var sampleData ={}; /* Sample random data. */   
 
     var currentYear = sliderTime.value().getYear() + 1900;
-    if (voteData.has(currentYear)) {
-        uStates.draw("#statesvg", voteData.get(currentYear), tooltipHtml);
-    } else {
-        //console.log(currentYear);
-        ["HI", "AK", "FL", "SC", "GA", "AL", "NC", "TN", "RI", "CT", "MA",
-        "ME", "NH", "VT", "NY", "NJ", "PA", "DE", "MD", "WV", "KY", "OH", 
-        "MI", "WY", "MT", "ID", "WA", "DC", "TX", "CA", "AZ", "NV", "UT", 
-        "CO", "NM", "OR", "ND", "SD", "NE", "IA", "MS", "IN", "IL", "MN", 
-        "WI", "MO", "AR", "OK", "KS", "LA", "VA"]
-            .forEach(function(d){
-                var map2 = map.get(currentYear);
-                var loserMap2 = loserMap.get(currentYear);
-                //console.log(map2);
-                //console.log(map2);
-                //console.log(map2.get(d));
-                var info = map2.get(d);
-                var info2 = loserMap2.get(d);
-                //x	console.log(d);
-                //console.log(info);
-                //console.log(d);
-                //console.log(d);
-                //console.log(info);
-                var party = info[2];
-                var votes = info[0];
-                var totalvotes = info[1];
-                var loserVotes = info2[0];
-                var winningPercent = (1.0 * votes) / (votes + loserVotes);
-                winningPercent = Math.min(1, 4*(winningPercent - .42));
-                // winning percent is simply a ratio to decide coloring, not actual winning percent
-                var otherVotes = totalvotes - votes - loserVotes;
-                //console.log(party);
-                if(party == "democrat") {
-                    /*var low=Math.round(50 + 50*Math.random()), 
-                        mid=Math.round(50 + 50*Math.random()), 
-                        high=Math.round(50 + 50*Math.random());
-                    sampleData[d]={low:d3.min([low,mid,high]), high:d3.max([low,mid,high]), 
-                            avg:Math.round((low+mid+high)/3), color:d3.interpolate("#FFFFFF", "#0015BC")((low/100))}; 
-                    */
-                    sampleData[d] = {low:votes, high:loserVotes, avg:otherVotes, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
-                } else {
-                    /*var low=Math.round(50*Math.random()), 
-                        mid=Math.round(50*Math.random()), 
-                        high=Math.round(50*Math.random());
-                    sampleData[d]={low:d3.min([low,mid,high]), high:d3.max([low,mid,high]), 
-                            avg:Math.round((low+mid+high)/3), color:d3.interpolate("#E9141D", "#FFFFFF")((low/100))}; 
-                    */
-                    sampleData[d] = {low:loserVotes, high:votes, avg:otherVotes, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
-                }
-            });
-        /* draw states on id #statesvg */	
-        //console.log(sampleData);
-        //setTimeout(function () {
-        voteData.set(currentYear, sampleData);
-        uStates.draw("#statesvg", sampleData, tooltipHtml);
-        //}, 1500);
-    // d3.select(self.frameElement).style("height", "600px");
-    }
-    
+    ["HI", "AK", "FL", "SC", "GA", "AL", "NC", "TN", "RI", "CT", "MA",
+    "ME", "NH", "VT", "NY", "NJ", "PA", "DE", "MD", "WV", "KY", "OH", 
+    "MI", "WY", "MT", "ID", "WA", "DC", "TX", "CA", "AZ", "NV", "UT", 
+    "CO", "NM", "OR", "ND", "SD", "NE", "IA", "MS", "IN", "IL", "MN", 
+    "WI", "MO", "AR", "OK", "KS", "LA", "VA"]
+        .forEach(function(d){
+            var map2 = map.get(currentYear);
+            var loserMap2 = loserMap.get(currentYear);
+            //console.log(map2);
+            //console.log(map2);
+            //console.log(map2.get(d));
+            var info = map2.get(d);
+            var info2 = loserMap2.get(d);
+            //x console.log(d);
+            //console.log(info);
+            //console.log(d);
+            //console.log(d);
+            //console.log(info);
+            var party = info[2];
+            var votes = info[0];
+            var totalvotes = info[1];
+            var loserVotes = info2[0];
+            var winningPercent = (1.0 * votes) / (votes + loserVotes);// fraction only including repub and dem
+            winningPercent = Math.min(1, 4*(winningPercent - .42));
+            // winning percent is simply a ratio to decide coloring, not actual winning percent
+            var otherVotes = totalvotes - votes - loserVotes;
+            var winPercent = Math.round((10000.0 * votes) / (totalvotes)) / 100; // this fraction includes other
+            var losePercent = Math.round((10000.0 * loserVotes) / (totalvotes)) / 100;
+            var otherPercent = Math.round((10000.0 * otherVotes) / (totalvotes)) / 100; 
+            // LOW = the democrat votes, HIGH = the republican votes AVG = other votes
+            if(party == "democrat") {
+                /*var low=Math.round(50 + 50*Math.random()), 
+                    mid=Math.round(50 + 50*Math.random()), 
+                    high=Math.round(50 + 50*Math.random());
+                sampleData[d]={low:d3.min([low,mid,high]), high:d3.max([low,mid,high]), 
+                        avg:Math.round((low+mid+high)/3), color:d3.interpolate("#FFFFFF", "#0015BC")((low/100))}; 
+                */
+                sampleData[d] = {low:winPercent, high:losePercent, avg:otherPercent, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
+                //sampleData[d] = {low:votes, high:loserVotes, avg:otherVotes, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
+            } else {
+                /*var low=Math.round(50*Math.random()), 
+                    mid=Math.round(50*Math.random()), 
+                    high=Math.round(50*Math.random());
+                sampleData[d]={low:d3.min([low,mid,high]), high:d3.max([low,mid,high]), 
+                        avg:Math.round((low+mid+high)/3), color:d3.interpolate("#E9141D", "#FFFFFF")((low/100))}; 
+                */
+                sampleData[d] = {low:losePercent, high:winPercent, avg:otherPercent, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
+            }
+        });
+    /* draw states on id #statesvg */   
+    //console.log(sampleData);
+    //setTimeout(function () {
+    uStates.draw("#statesvg", sampleData, tooltipHtml);
+    //}, 1500);
+   // d3.select(self.frameElement).style("height", "600px");
 }
-
-populateMap();
 
 function sliderChange(val){
     d3.select('#title-container').text("US Election Results in "+d3.timeFormat('%Y')(sliderTime.value()));

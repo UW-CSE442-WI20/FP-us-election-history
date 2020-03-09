@@ -54,9 +54,7 @@
 	];
 	var uStates={};
 	this.uStates = uStates;
-	uStates.draw = function(id, data, toolTip){		
-		console.log("did something");
-		console.log(data)
+	uStates.draw = function(id, data, toolTip){
 		function mouseOver(d){
 			d3.select("#tooltip").transition().duration(200).style("opacity", .9);      
 			
@@ -66,13 +64,25 @@
 		}
 		
 		function mouseOut(){
-			d3.select("#tooltip").transition().duration(500).style("opacity", 0);      
+			d3.select("#tooltip").transition().duration(200).style("opacity", 0);      
+		}
+		/*
+		in this function for mouse clicked you can make a state appear in more detail
+		*/
+		function mouseClick(d) {
+			console.log(d.id);
 		}
 		
 		d3.select(id).selectAll(".state_po")
 			.data(uStatePaths).enter().append("path").attr("class","state").attr("d",function(d){ return d.d;})
 			.style("fill",function(d){ return data[d.id].color; })
-			.on("mouseover", mouseOver).on("mouseout", mouseOut);
+			// Here is where I can play around with the tooltip to print what I want/make states look weird
+			//.style("size", function(d){return data[d.id].state_po})
+			.on("mouseover", mouseOver).on("mouseout", mouseOut)
+			.on("click", mouseClick);
+			/*
+			I suspect that to do the click it should be like .on("click") or something but idk
+			*/
 	}
 	this.uStates=uStates;
 })();

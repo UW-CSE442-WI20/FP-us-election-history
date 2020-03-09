@@ -9,17 +9,23 @@
 	.state:hover{
 		fill-opacity:0.5;
 	}
+	/*
+	This part works on where the tooltip is located in relation to the state
+	*/
 	#tooltip {   
 		position: absolute;           
 		text-align: center;
 		padding: 20px;             
 		margin: 10px;
-		font: 12px sans-serif;        
-		background: lightsteelblue;   
-		border: 1px;      
+		font: 32px sans-serif;        
+		background: black;   
+		border: 10px;      
 		border-radius: 2px;           
 		pointer-events: none;         
 	}
+	/*
+	This appears to be the HTML code for the header of the tooltip
+	*/
 	#tooltip h4{
 		margin:0;
 		font-size:14px;
@@ -34,18 +40,31 @@
 		color:white;
 		opacity:0;
 	}
+	/*
+	idk yet what this does but something related to the table of the tooltip
+	*/
 	#tooltip table{
 		table-layout:fixed;
 	}
+	/*
+	probably how we fit the data between eachother
+	*/
 	#tooltip tr td{
 		padding:0;
 		margin:0;
 	}
+	/*
+	this is how the party names are organized (left justified???)
+	*/
 	#tooltip tr td:nth-child(1){
-		width:50px;
+		/*width:500px;*/
+		text-align:left;
 	}
+	/*
+	This is how text is aligned on it ( I think right is better)
+	*/
 	#tooltip tr td:nth-child(2){
-		text-align:center;
+		text-align:right;
 	}
 
 	#title-container {
