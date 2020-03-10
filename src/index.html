@@ -37,7 +37,8 @@
 		font-size:12px;
 		width:auto;
 		padding:4px;
-		color:white;
+		color:black;
+		background-color: white;
 		opacity:0;
 	}
 	/*
@@ -50,21 +51,35 @@
 	probably how we fit the data between eachother
 	*/
 	#tooltip tr td{
-		padding:0;
-		margin:0;
+		padding:1px;
+		padding-left: 5px;
 	}
 	/*
-	this is how the party names are organized (left justified???)
+	People names
 	*/
 	#tooltip tr td:nth-child(1){
 		/*width:500px;*/
 		text-align:left;
 	}
 	/*
-	This is how text is aligned on it ( I think right is better)
+	this is how the party names are organized (left justified???)
 	*/
 	#tooltip tr td:nth-child(2){
+		/*width:500px;*/
+		text-align:left;
+	}
+	/*
+	This is how text is aligned on it ( I think right is better)
+	*/
+	#tooltip tr td:nth-child(3){
 		text-align:right;
+	}
+	/*
+	This is how text is aligned on it ( I think right is better)
+	*/
+	#tooltip tr td:nth-child(4){
+		text-align:right;
+		margin-left:5;
 	}
 
 	#title-container {
@@ -224,7 +239,7 @@
     .width(300)
     .tickFormat(d3.timeFormat('%Y'))
     .tickValues(dataTime)
-    .default(new Date(2016, 10, 5)) // the initial year we start at
+    .default(new Date(1976, 10, 5)) // the initial year we start at
     /*.on('onchange', val => {
 	  // d3.select('p#value-time').text(d3.timeFormat('%Y')(val));
 	  d3.select('#title-container').text("US Election Results in "+d3.timeFormat('%Y')(sliderTime.value()));
