@@ -168,11 +168,15 @@ function popMapWithYear(currentYear) {
                 var winnerName = tempName[1] + " " + tempName[0];
                 tempName = info2[3].split(",");
                 var loserName = tempName[1] + " " + tempName[0];
+                // Now breaking up strings so we have commas for vote count
+                console.log(d);
+                strVotes = addCommas(votes);
+                strLoserVotes = addCommas(loserVotes);
                 if (info3 == null) {
                     if(party == "democrat") {
-                        sampleData[d] = {demName:winnerName, repName:loserName, partyCount:2, dem:winPercent, rep:losePercent, demVotes:votes, repVotes:loserVotes, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
+                        sampleData[d] = {demName:winnerName, repName:loserName, partyCount:2, dem:winPercent, rep:losePercent, demVotes:strVotes, repVotes:strLoserVotes, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
                     } else {
-                        sampleData[d] = {demName:loserName, repName:winnerName, partyCount:2, dem:losePercent, rep:winPercent, demVotes:loserVotes, repVotes:votes, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
+                        sampleData[d] = {demName:loserName, repName:winnerName, partyCount:2, dem:losePercent, rep:winPercent, demVotes:strLoserVotes, repVotes:strVotes, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
                     }                
                 }
                 else {
@@ -182,6 +186,7 @@ function popMapWithYear(currentYear) {
                     var otherPercent = Math.round((1000.0 * otherVotes) / (totalvotes)) / 10; 
                     var thirdParty = info3[2].charAt(0).toUpperCase() + info3[2].substring(1);
                     var otherName;
+                    // if there are only 3 things/there is no third person listed (the third person is other)
                     if (info3[3] === 'Other' || info3[3] === '') {
                         otherName = 'Other';
                         thirdVotes += otherVotes;
@@ -190,18 +195,20 @@ function popMapWithYear(currentYear) {
                     } else {
                         tempName = info3[3].split(",");
                         otherName = tempName[1] + " " + tempName[0];
+                        otherVotes = addCommas(otherVotes);
                     }
+                    thirdVotes = addCommas(thirdVotes);
                     if (otherVotes === 0) {
                         if(party == "democrat") {
-                            sampleData[d] = {otherName:otherName, demName:winnerName, repName:loserName,partyCount:3, dem:winPercent, demVotes:votes, repVotes:loserVotes, rep:losePercent, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
+                            sampleData[d] = {otherName:otherName, demName:winnerName, repName:loserName,partyCount:3, dem:winPercent, demVotes:strVotes, repVotes:strLoserVotes, rep:losePercent, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
                         } else {
-                            sampleData[d] = {otherName:otherName, demName:loserName, repName:winnerName,partyCount:3, dem:losePercent, demVotes:loserVotes, repVotes:votes, rep:winPercent, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
+                            sampleData[d] = {otherName:otherName, demName:loserName, repName:winnerName,partyCount:3, dem:losePercent, demVotes:strLoserVotes, repVotes:strVotes, rep:winPercent, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
                         }
                     } else {
                         if(party == "democrat") {
-                            sampleData[d] = {otherName:otherName, demName:winnerName, repName:loserName,partyCount:4, dem:winPercent, demVotes:votes, repVotes:loserVotes, rep:losePercent, other:otherPercent, otherVotes:otherVotes, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
+                            sampleData[d] = {otherName:otherName, demName:winnerName, repName:loserName,partyCount:4, dem:winPercent, demVotes:strVotes, repVotes:strLoserVotes, rep:losePercent, other:otherPercent, otherVotes:otherVotes, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
                         } else {
-                            sampleData[d] = {otherName:otherName, demName:loserName, repName:winnerName,partyCount:4, dem:losePercent, demVotes:loserVotes, repVotes:votes, rep:winPercent, other:otherPercent, otherVotes:otherVotes, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
+                            sampleData[d] = {otherName:otherName, demName:loserName, repName:winnerName,partyCount:4, dem:losePercent, demVotes:strLoserVotes, repVotes:strVotes, rep:winPercent, other:otherPercent, otherVotes:otherVotes, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
                         }
                     }
                 }
@@ -215,7 +222,37 @@ function popMapWithYear(currentYear) {
     //}, 1500);
    // d3.select(self.frameElement).style("height", "600px");
 }
-
+// TURNING VOTE COUNT INTO STRING WITH COMMAS
+function addCommas(votes) {
+    console.log(votes);
+    if (votes >= 1000000) {
+        var millions = votes / 1000000 | 0;
+        var thousands = ((votes / 1000) % 1000) | 0;
+        var ones = votes % 1000;
+        if (thousands < 10) {
+            thousands = "00" + thousands;
+        } else if (thousands < 100) {
+            thousands = "0" + thousands;
+        }
+        if (ones < 10) {
+            ones = "00" + ones;
+        } else if (ones < 100) {
+            ones = "0" + ones;
+        }
+        votes = "" + millions + "," + thousands +  "," + ones;
+    }
+    else if (votes >= 1000) {
+        var thousands = ((votes / 1000) % 1000) | 0;
+        var ones = votes % 1000;
+        if (ones < 10) {
+            ones = "00" + ones;
+        } else if (ones < 100) {
+            ones = "0" + ones;
+        }
+        votes = "" + thousands +  "," + ones;
+    }
+    return votes;
+}
 // PANOMARIC VIEW LOGIC
 
 var pan = document.getElementById("play");
