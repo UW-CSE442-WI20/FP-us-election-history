@@ -283,7 +283,7 @@ function panView() {
     //sliderTime.value(dataTime[0]);
     //sliderChange();
     // year count is amount of years we are working with (maybe should make a global constant)
-    var yearCount = 12
+    var yearCount = 11
     for (var i = 0; i < yearCount; i ++) {
         timeouts.push(setTimeout(changeSlider, i * 1000, i));
     }
