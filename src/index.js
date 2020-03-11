@@ -2,7 +2,8 @@ var obj = require("./election-data.json");
 //console.log(obj);
 
 //console.log(obj.length);
-
+// If we are changin
+var autoUpdating = false;
 var voteData = new Map();
 // we are now keeping track of the year as a public variable, so we only update
 // The map when the actual year changes
@@ -87,9 +88,12 @@ function tooltipHtml(n, d){ /* function to create html content string in tooltip
 }
 
 function sliderChange(val){
-    for (var i = 0; i < timeouts.length; i++) {
-        clearTimeout(timeouts[i]);
+    if (!autoUpdating) {
+        for (var i = 0; i < timeouts.length; i++) {
+            clearTimeout(timeouts[i]);
+        }
     }
+    autoUpdating = false;
     //console.log(publicYear);
     //var beforeChangeYear = 
     var currentYear = sliderTime.value().getYear() + 1900;
@@ -129,6 +133,7 @@ sliderChange();
 
 // panoramic view logic
 function popMapWithYear(currentYear) {
+    //sliderTime.sliderBottom().max = d3.max(dataTime);
     var sampleData ={}; /* Sample random data. */   
     let titleVar = document.getElementById("title-container");
     titleVar.innerHTML = "US Election Results in " + currentYear;
@@ -169,9 +174,15 @@ function popMapWithYear(currentYear) {
                 tempName = info2[3].split(",");
                 var loserName = tempName[1] + " " + tempName[0];
                 // Now breaking up strings so we have commas for vote count
-                console.log(d);
                 strVotes = addCommas(votes);
                 strLoserVotes = addCommas(loserVotes);
+                // If the percent is a whole number, still displays .0 at the end
+                if (losePercent * 10 % 10 == 0) {
+                    losePercent = losePercent + ".0";
+                }
+                if (winPercent * 10 % 10 == 0) {
+                    winPercent = winPercent + ".0";
+                }
                 if (info3 == null) {
                     if(party == "democrat") {
                         sampleData[d] = {demName:winnerName, repName:loserName, partyCount:2, dem:winPercent, rep:losePercent, demVotes:strVotes, repVotes:strLoserVotes, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
@@ -182,10 +193,9 @@ function popMapWithYear(currentYear) {
                 else {
                     var thirdVotes = info3[0];
                     var otherVotes = totalvotes - votes - loserVotes - thirdVotes;
-                    var thirdPlacePercent = Math.round((1000.0 * thirdVotes) / (totalvotes)) / 10;
-                    var otherPercent = Math.round((1000.0 * otherVotes) / (totalvotes)) / 10; 
                     var thirdParty = info3[2].charAt(0).toUpperCase() + info3[2].substring(1);
                     var otherName;
+                    var otherPercent;
                     // if there are only 3 things/there is no third person listed (the third person is other)
                     if (info3[3] === 'Other' || info3[3] === '') {
                         otherName = 'Other';
@@ -193,9 +203,17 @@ function popMapWithYear(currentYear) {
                         thirdParty = 'N/A';
                         otherVotes = 0;
                     } else {
+                        otherPercent = Math.round((1000.0 * otherVotes) / (totalvotes)) / 10; 
+                        if (otherPercent * 10 % 10 == 0) {
+                            otherPercent = otherPercent + ".0";
+                        }
                         tempName = info3[3].split(",");
                         otherName = tempName[1] + " " + tempName[0];
                         otherVotes = addCommas(otherVotes);
+                    }
+                    var thirdPlacePercent = Math.round((1000.0 * thirdVotes) / (totalvotes)) / 10;
+                    if (thirdPlacePercent * 10 % 10 == 0) {
+                        thirdPlacePercent = thirdPlacePercent + ".0";
                     }
                     thirdVotes = addCommas(thirdVotes);
                     if (otherVotes === 0) {
@@ -224,7 +242,6 @@ function popMapWithYear(currentYear) {
 }
 // TURNING VOTE COUNT INTO STRING WITH COMMAS
 function addCommas(votes) {
-    console.log(votes);
     if (votes >= 1000000) {
         var millions = votes / 1000000 | 0;
         var thousands = ((votes / 1000) % 1000) | 0;
@@ -262,8 +279,16 @@ function panView() {
     for (var i = 0; i < timeouts.length; i++) {
         clearTimeout(timeouts[i]);
     }
-    timeouts.push(setTimeout(popMapWithYear, 0000, 1976));
-    timeouts.push(setTimeout(popMapWithYear, 0000, 1976));
+    //console.log(sliderTime.value());
+    //sliderTime.value(dataTime[0]);
+    //sliderChange();
+    // year count is amount of years we are working with (maybe should make a global constant)
+    var yearCount = 12
+    for (var i = 0; i < yearCount; i ++) {
+        timeouts.push(setTimeout(changeSlider, i * 1000, i));
+    }
+    //timeouts.push(setTimeout(popMapWithYear, 0000, 1976));
+    /*timeouts.push(setTimeout(popMapWithYear, 0000, 1976));
     timeouts.push(setTimeout(popMapWithYear, 1000, 1980));
     timeouts.push(setTimeout(popMapWithYear, 2000, 1984));
     timeouts.push(setTimeout(popMapWithYear, 3000, 1988));
@@ -273,7 +298,12 @@ function panView() {
     timeouts.push(setTimeout(popMapWithYear, 7000, 2004));
     timeouts.push(setTimeout(popMapWithYear, 8000, 2008));
     timeouts.push(setTimeout(popMapWithYear, 9000, 2012));
-    timeouts.push(setTimeout(popMapWithYear, 10000, 2016));
+    timeouts.push(setTimeout(popMapWithYear, 10000, 2016));*/
+}
+
+function changeSlider(index) {
+    autoUpdating = true;
+    sliderTime.value(dataTime[index]);
 }
 /*pan.addEventListener("click", function(){
     setInterval(function(){
