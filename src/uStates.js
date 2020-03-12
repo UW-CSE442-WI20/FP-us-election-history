@@ -70,7 +70,7 @@
 		in this function for mouse clicked you can make a state appear in more detail
 		*/
 		function mouseClick(d) {
-			console.log(d.id);
+			//console.log(d.id);
 		}
 
 		var xValues = [];
@@ -141,7 +141,7 @@
 			.each(function(d) {
 				var el = d3.select(this).node();
 				var bbox = el.getBBox();
-				console.log(bbox)
+				//console.log(bbox)
 				// xValues.push(bbox.x + bbox.width / 2);
 				// yValues.push(bbox.y + bbox.height / 2);
 				var { x: xOffset, y: yOffset } = stateSpecificOffsets[d.id] || { x: 0, y: 0};
@@ -152,7 +152,7 @@
 			I suspect that to do the click it should be like .on("click") or something but idk
 			*/
 
-		console.log(xValues);
+		//console.log(xValues);
 
 		d3.select(id).selectAll(".state-po")
 			.data(uStatePaths).enter().append('text').text(function(d) {return d.id;})

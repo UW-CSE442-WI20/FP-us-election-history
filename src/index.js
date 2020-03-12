@@ -56,6 +56,25 @@ for (var i = 0; i < obj.length; i++) {
 var timeouts = [];
 
 
+var textMap = new Map();
+var infoDiv = document.getElementById("info");
+
+function populateTextMap() {
+    textMap.set(1976, "The 1976 United States presidential election was the 48th quadrennial presidential election. It was held on Tuesday, November 2, 1976. Democrat Jimmy Carter of Georgia defeated incumbent Republican President Gerald Ford from Michigan. Carter's win represented the lone Democratic victory in a presidential election held between 1968 and 1992.");
+    textMap.set(1980, "The 1980 United States presidential election was the 49th quadrennial presidential election. It was held on Tuesday, November 4, 1980. Republican nominee Ronald Reagan defeated incumbent Democrat Jimmy Carter. Due to the rise of conservatism following Reagan's victory, some historians consider the election to be a realigning election that marked the start of the Reagan Era.");
+    textMap.set(1984, "The 1984 United States presidential election was the 50th quadrennial presidential election. It was held on Tuesday, November 6, 1984. Incumbent Republican President Ronald Reagan defeated former Vice President Walter Mondale, the Democratic candidate.");
+    textMap.set(1988, "The 1988 United States presidential election was the 51st quadrennial presidential election. It was held on Tuesday, November 8, 1988. Incumbent Vice President George H. W. Bush, the Republican nominee, defeated Democratic Governor Michael Dukakis of Massachusetts. The 1988 election is the only election since 1948 in which either major party won a third straight presidential election.");
+    textMap.set(1992, "The 1992 United States presidential election was the 52nd quadrennial presidential election. It was held on Tuesday, November 3, 1992. Democratic Governor Bill Clinton of Arkansas defeated incumbent Republican President George H. W. Bush, independent businessman Ross Perot of Texas, and a number of minor candidates.");
+    textMap.set(1996, "The 1996 United States presidential election was the 53rd quadrennial presidential election. It was held on Tuesday, November 5, 1996. Incumbent Democratic President Bill Clinton defeated former Senate Majority Leader Bob Dole, the Republican nominee, and Ross Perot, the Reform Party nominee.");
+    textMap.set(2000, "The 2000 United States presidential election was the 54th quadrennial presidential election. It was held on Tuesday, November 7, 2000. Republican candidate George W. Bush, the governor of Texas and eldest son of the 41st president, George H. W. Bush, won the election, defeating Democratic nominee Al Gore, the incumbent vice president. It was the fourth of five presidential elections in which the winning candidate lost the popular vote, and is considered one of the closest elections in US history.");
+    textMap.set(2004, "The 2004 United States presidential election was the 55th quadrennial presidential election, held on Tuesday, November 2, 2004. Incumbent Republican President George W. Bush defeated Democratic nominee John Kerry, a United States Senator from Massachusetts.");
+    textMap.set(2008, "The 2008 United States presidential election was the 56th quadrennial presidential election, held on Tuesday, November 4, 2008. The Democratic ticket of Barack Obama, the junior U.S. Senator from Illinois, and Joe Biden, the senior U.S. Senator from Delaware, defeated the Republican ticket of John McCain, the senior Senator from Arizona, and Sarah Palin, the Governor of Alaska. Obama became the first African American ever to be elected to the presidency as well as being only the third sitting United States Senator elected president, joining Warren G. Harding and John F. Kennedy.");
+    textMap.set(2012, "The 2012 United States presidential election was the 57th quadrennial presidential election, held on Tuesday, November 6, 2012. The Democratic nominee, President Barack Obama, and his running mate, Vice President Joe Biden, were elected to a second term. They defeated the Republican ticket of businessman and former Governor Mitt Romney of Massachusetts and Representative Paul Ryan of Wisconsin.");
+    textMap.set(2016, "The 2016 United States presidential election was the 58th quadrennial presidential election, held on Tuesday, November 8, 2016. The Republican ticket of businessman Donald Trump and Indiana Governor Mike Pence defeated the Democratic ticket of former Secretary of State Hillary Clinton and U.S. Senator from Virginia Tim Kaine, despite losing the popular vote. Trump took office as the 45th president, and Pence as the 48th vice president, on January 20, 2017.");
+}
+
+populateTextMap();
+
 //console.log(map);
 
 //console.log(map);
@@ -125,6 +144,7 @@ function sliderChange(val){
       }
       //populateMap();
       popMapWithYear(currentYear);
+      infoDiv.innerHTML = textMap.get(currentYear);
   }
 }
 
@@ -139,7 +159,7 @@ function popMapWithYear(currentYear) {
     titleVar.innerHTML = "US Election Results in " + currentYear;
     // idk if this if statement is actually necessary/currently it is not being used
     if (voteData.has(currentYear)) {
-        console.log("TRUE");
+        //console.log("TRUE");
         uStates.draw("#statesvg", voteData.get(currentYear), tooltipHtml);
     } else {
         //var currentYear = sliderTime.value().getYear() + 1900;
@@ -316,4 +336,5 @@ function changeSlider(index) {
 
 
 //console.log(map);
+
 
