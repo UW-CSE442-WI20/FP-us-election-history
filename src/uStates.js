@@ -72,17 +72,98 @@
 		function mouseClick(d) {
 			console.log(d.id);
 		}
-		
+
+		var xValues = [];
+		var yValues = [];
+
+		var stateSpecificOffsets = {
+			CA: {
+				x: -15,
+				y: 0,
+			},
+			ID: {
+				x: 0,
+				y: 20,
+			},
+			MN: {
+				x: -15,
+				y: 10,
+			},
+			LA: {
+				x: -20,
+				y: 0,
+			},
+			FL: {
+				x: 45,
+				y: 0,
+			},
+			VA: {
+				x: 20,
+				y: 0,
+			},
+			WV: {
+				x: -10,
+				y: 15,
+			},
+			KY: {
+				x: 10,
+				y: 0,
+			},
+			DE: {
+				x: 15,
+				y: 12,
+			},
+			MI: {
+				x: 20,
+				y: 30,
+			},
+			NH: {
+				x: 0,
+				y: 15,
+			},
+			RI: {
+				x: 10,
+				y: 10,
+			},
+			MA: {
+				x: -2,
+				y: 2,
+			},
+		};
+
 		d3.select(id).selectAll(".state_po")
 			.data(uStatePaths).enter().append("path").attr("class","state").attr("d",function(d){ return d.d;})
 			.style("fill",function(d){ return data[d.id].color; })
 			// Here is where I can play around with the tooltip to print what I want/make states look weird
 			//.style("size", function(d){return data[d.id].state_po})
 			.on("mouseover", mouseOver).on("mouseout", mouseOut)
-			.on("click", mouseClick);
+			.on("click", mouseClick)
+			.each(function(d) {
+				var el = d3.select(this).node();
+				var bbox = el.getBBox();
+				console.log(bbox)
+				// xValues.push(bbox.x + bbox.width / 2);
+				// yValues.push(bbox.y + bbox.height / 2);
+				var { x: xOffset, y: yOffset } = stateSpecificOffsets[d.id] || { x: 0, y: 0};
+				xValues.push(bbox.x + bbox.width / 2 - 10 + xOffset);
+				yValues.push(bbox.y + bbox.height / 2 + yOffset);
+			});
 			/*
 			I suspect that to do the click it should be like .on("click") or something but idk
 			*/
+
+		console.log(xValues);
+
+		d3.select(id).selectAll(".state-po")
+			.data(uStatePaths).enter().append('text').text(function(d) {return d.id;})
+			.attr('x', function(d, i) { return xValues[i] })
+			.attr('y', function(d, i) { return yValues[i] })
+			.attr('fill', function(d) {
+				if (d.id == "DC") {
+					return 'none';
+				}
+				return 'black';
+			});
 	}
 	this.uStates=uStates;
 })();
