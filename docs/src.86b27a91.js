@@ -117,7 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"election-data.json":[function(require,module,exports) {
+})({"N2yf":[function(require,module,exports) {
 module.exports = [{
   "year": 1976,
   "state": "Alabama",
@@ -56219,32 +56219,41 @@ module.exports = [{
   "version": 20171015,
   "notes": "NA"
 }];
-},{}],"index.js":[function(require,module,exports) {
+},{}],"Focm":[function(require,module,exports) {
 var obj = require("./election-data.json"); //console.log(obj);
 //console.log(obj.length);
+// If we are changin
 
 
+var autoUpdating = false;
 var voteData = new Map(); // we are now keeping track of the year as a public variable, so we only update
 // The map when the actual year changes
 
 var publicYear = 0;
 var map = new Map();
 var loserMap = new Map();
+var thirdPlaceMap = new Map();
 var candidateMap = new Map();
 
 for (var i = 0; i < obj.length; i++) {
   var year = obj[i].year;
   var map2;
+  var map3;
   var partyMap;
   var loserMap2;
 
   if (!map.has(year)) {
     // insert year with votes data
-    partyMap = new Map();
-    loserMap2 = new Map();
-    map2 = new Map();
+    partyMap = new Map(); //party map is the candidates and their parties
+
+    loserMap2 = new Map(); // losermap 2 is a local version of the second place map
+
+    map2 = new Map(); // map 2 is a local version of the winner map
+
+    map3 = new Map(); // map 3 is a local version of the third place maap
   } else {
     map2 = map.get(year);
+    map3 = thirdPlaceMap.get(year);
     loserMap2 = loserMap.get(year);
     partyMap = candidateMap.get(year);
     partyMap.get(obj[i].party);
@@ -56257,10 +56266,13 @@ for (var i = 0; i < obj.length; i++) {
     map2.set(state, votes);
   } else if (!loserMap2.has(state)) {
     loserMap2.set(state, votes);
+  } else if (!map3.has(state)) {
+    map3.set(state, votes);
   }
 
   map.set(year, map2);
   loserMap.set(year, loserMap2);
+  thirdPlaceMap.set(year, map3);
 
   if (!partyMap.has(obj[i].party)) {
     partyMap.set(obj[i].party, {
@@ -56281,15 +56293,24 @@ var timeouts = []; //console.log(map);
 
 function tooltipHtml(n, d) {
   /* function to create html content string in tooltip div. */
-  return "<h4>" + n + "</h4><table>" + "<tr><td>Party</td><td>" + "Vote (Pct.)" + "</td></tr>" + "<tr><td>Democrat</td><td>" + d.dem + "</td></tr>" + "<tr><td>Republican</td><td>" + d.rep + "</td></tr>" + "<tr><td>Other</td><td>" + d.other + "</td></tr>" + "</table>";
+  if (d.partyCount === 2) {
+    return "<h4>" + n + "</h4><table>" + "<tr><td> Candidate </td><td>Party</td><td> Total Votes </td><td> Pct. </td></tr>" + "<tr><td>" + d.demName + "</td><td>Democrat</td><td>" + d.demVotes + "</td><td>" + d.dem + "</td></tr>" + "<tr><td>" + d.repName + "</td><td>Republican</td><td>" + d.repVotes + "</td><td>" + d.rep + "</td></tr>" + "</table>";
+  } else if (d.partyCount === 3) {
+    return "<h4>" + n + "</h4><table>" + "<tr><td> Candidate </td><td>Party</td><td> Total Votes </td><td> Pct. </td></tr>" + "<tr><td>" + d.demName + "</td><td>Democrat</td><td>" + d.demVotes + "</td><td>" + d.dem + "</td></tr>" + "<tr><td>" + d.repName + "</td><td>Republican</td><td>" + d.repVotes + "</td><td>" + d.rep + "</td></tr>" + "<tr><td>" + d.otherName + "</td><td>" + d.thirdPartyOne + "</td><td>" + d.thirdPartyVotes + "</td><td>" + d.thirdVotes + "</td></tr>" + "</table>";
+  } else {
+    return "<h4>" + n + "</h4><table>" + "<tr><td> Candidate </td><td>Party</td><td> Total Votes </td><td> Pct. </td></tr>" + "<tr><td>" + d.demName + "</td><td>Democrat</td><td>" + d.demVotes + "</td><td>" + d.dem + "</td></tr>" + "<tr><td>" + d.repName + "</td><td>Republican</td><td>" + d.repVotes + "</td><td>" + d.rep + "</td></tr>" + "<tr><td>" + d.otherName + "</td><td>" + d.thirdPartyOne + "</td><td>" + d.thirdPartyVotes + "</td><td>" + d.thirdVotes + "</td></tr>" + "<tr><td>Other</td><td> N/A </td><td>" + d.otherVotes + "</td><td>" + d.other + "</td></tr>" + "</table>";
+  }
 }
 
 function sliderChange(val) {
-  for (var i = 0; i < timeouts.length; i++) {
-    clearTimeout(timeouts[i]);
-  } //console.log(publicYear);
-  //var beforeChangeYear = 
+  if (!autoUpdating) {
+    for (var i = 0; i < timeouts.length; i++) {
+      clearTimeout(timeouts[i]);
+    }
+  }
 
+  autoUpdating = false; //console.log(publicYear);
+  //var beforeChangeYear = 
 
   var currentYear = sliderTime.value().getYear() + 1900; // only do stuff if the year has changed
 
@@ -56326,6 +56347,7 @@ sliderTime.on('onchange', sliderChange);
 sliderChange(); // panoramic view logic
 
 function popMapWithYear(currentYear) {
+  //sliderTime.sliderBottom().max = d3.max(dataTime);
   var sampleData = {};
   /* Sample random data. */
 
@@ -56338,41 +56360,173 @@ function popMapWithYear(currentYear) {
   } else {
     //var currentYear = sliderTime.value().getYear() + 1900;
     //console.log(currentYear);
+    // map 2 = the winners
+    var map2 = map.get(currentYear); // loser map 2 = the second place
+
+    var loserMap2 = loserMap.get(currentYear); // iinfo and info 2 i believe are the results for a specific state
+
+    var thirdPlace2 = thirdPlaceMap.get(currentYear);
     ["HI", "AK", "FL", "SC", "GA", "AL", "NC", "TN", "RI", "CT", "MA", "ME", "NH", "VT", "NY", "NJ", "PA", "DE", "MD", "WV", "KY", "OH", "MI", "WY", "MT", "ID", "WA", "DC", "TX", "CA", "AZ", "NV", "UT", "CO", "NM", "OR", "ND", "SD", "NE", "IA", "MS", "IN", "IL", "MN", "WI", "MO", "AR", "OK", "KS", "LA", "VA"].forEach(function (d) {
-      var map2 = map.get(currentYear);
-      var loserMap2 = loserMap.get(currentYear);
       var info = map2.get(d);
       var info2 = loserMap2.get(d);
-      var party = info[2];
-      var votes = info[0];
-      var totalvotes = info[1];
-      var loserVotes = info2[0];
-      var winningPercent = 1.0 * votes / (votes + loserVotes); // fraction only including repub and dem
+      var info3 = thirdPlace2.get(d);
+      var party = info[2]; // party of winner
+
+      var votes = info[0]; // raw votes of winner
+
+      var totalvotes = info[1]; // total overall votes
+
+      var loserVotes = info2[0]; // raw votes of second place
+
+      var winningPercent = 1.0 * votes / (votes + loserVotes); // fraction only including repub and dem (top 2)
 
       winningPercent = Math.min(1, 4 * (winningPercent - .42)); // winning percent is simply a ratio to decide coloring, not actual winning percent
 
-      var otherVotes = totalvotes - votes - loserVotes;
-      var winPercent = Math.round(10000.0 * votes / totalvotes) / 100; // this fraction includes other
+      var winPercent = Math.round(1000.0 * votes / totalvotes) / 10; // this fraction includes other
 
-      var losePercent = Math.round(10000.0 * loserVotes / totalvotes) / 100;
-      var otherPercent = Math.round(10000.0 * otherVotes / totalvotes) / 100; // LOW = the democrat votes, HIGH = the republican votes AVG = other votes
+      var losePercent = Math.round(1000.0 * loserVotes / totalvotes) / 10; // IF THERE ARE ONLY 2 PARTIES WE ONLY DISPLAY TWO PARTIES    
 
-      if (party == "democrat") {
-        sampleData[d] = {
-          id: d,
-          dem: winPercent,
-          rep: losePercent,
-          other: otherPercent,
-          color: d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)
-        };
+      var tempName = info[3].split(",");
+      var winnerName = tempName[1] + " " + tempName[0];
+      tempName = info2[3].split(",");
+      var loserName = tempName[1] + " " + tempName[0]; // Now breaking up strings so we have commas for vote count
+
+      strVotes = addCommas(votes);
+      strLoserVotes = addCommas(loserVotes); // If the percent is a whole number, still displays .0 at the end
+
+      if (losePercent * 10 % 10 == 0) {
+        losePercent = losePercent + ".0";
+      }
+
+      if (winPercent * 10 % 10 == 0) {
+        winPercent = winPercent + ".0";
+      }
+
+      if (info3 == null) {
+        if (party == "democrat") {
+          sampleData[d] = {
+            demName: winnerName,
+            repName: loserName,
+            partyCount: 2,
+            dem: winPercent,
+            rep: losePercent,
+            demVotes: strVotes,
+            repVotes: strLoserVotes,
+            color: d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)
+          };
+        } else {
+          sampleData[d] = {
+            demName: loserName,
+            repName: winnerName,
+            partyCount: 2,
+            dem: losePercent,
+            rep: winPercent,
+            demVotes: strLoserVotes,
+            repVotes: strVotes,
+            color: d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)
+          };
+        }
       } else {
-        sampleData[d] = {
-          id: d,
-          dem: losePercent,
-          rep: winPercent,
-          other: otherPercent,
-          color: d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)
-        };
+        var thirdVotes = info3[0];
+        var otherVotes = totalvotes - votes - loserVotes - thirdVotes;
+        var thirdParty = info3[2].charAt(0).toUpperCase() + info3[2].substring(1);
+        var otherName;
+        var otherPercent; // if there are only 3 things/there is no third person listed (the third person is other)
+
+        if (info3[3] === 'Other' || info3[3] === '') {
+          otherName = 'Other';
+          thirdVotes += otherVotes;
+          thirdParty = 'N/A';
+          otherVotes = 0;
+        } else {
+          otherPercent = Math.round(1000.0 * otherVotes / totalvotes) / 10;
+
+          if (otherPercent * 10 % 10 == 0) {
+            otherPercent = otherPercent + ".0";
+          }
+
+          tempName = info3[3].split(",");
+          otherName = tempName[1] + " " + tempName[0];
+          otherVotes = addCommas(otherVotes);
+        }
+
+        var thirdPlacePercent = Math.round(1000.0 * thirdVotes / totalvotes) / 10;
+
+        if (thirdPlacePercent * 10 % 10 == 0) {
+          thirdPlacePercent = thirdPlacePercent + ".0";
+        }
+
+        thirdVotes = addCommas(thirdVotes);
+
+        if (otherVotes === 0) {
+          if (party == "democrat") {
+            sampleData[d] = {
+              otherName: otherName,
+              demName: winnerName,
+              repName: loserName,
+              partyCount: 3,
+              dem: winPercent,
+              demVotes: strVotes,
+              repVotes: strLoserVotes,
+              rep: losePercent,
+              thirdPartyOne: thirdParty,
+              thirdPartyVotes: thirdVotes,
+              thirdVotes: thirdPlacePercent,
+              color: d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)
+            };
+          } else {
+            sampleData[d] = {
+              otherName: otherName,
+              demName: loserName,
+              repName: winnerName,
+              partyCount: 3,
+              dem: losePercent,
+              demVotes: strLoserVotes,
+              repVotes: strVotes,
+              rep: winPercent,
+              thirdPartyOne: thirdParty,
+              thirdPartyVotes: thirdVotes,
+              thirdVotes: thirdPlacePercent,
+              color: d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)
+            };
+          }
+        } else {
+          if (party == "democrat") {
+            sampleData[d] = {
+              otherName: otherName,
+              demName: winnerName,
+              repName: loserName,
+              partyCount: 4,
+              dem: winPercent,
+              demVotes: strVotes,
+              repVotes: strLoserVotes,
+              rep: losePercent,
+              other: otherPercent,
+              otherVotes: otherVotes,
+              thirdPartyOne: thirdParty,
+              thirdPartyVotes: thirdVotes,
+              thirdVotes: thirdPlacePercent,
+              color: d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)
+            };
+          } else {
+            sampleData[d] = {
+              otherName: otherName,
+              demName: loserName,
+              repName: winnerName,
+              partyCount: 4,
+              dem: losePercent,
+              demVotes: strLoserVotes,
+              repVotes: strVotes,
+              rep: winPercent,
+              other: otherPercent,
+              otherVotes: otherVotes,
+              thirdPartyOne: thirdParty,
+              thirdPartyVotes: thirdVotes,
+              thirdVotes: thirdPlacePercent,
+              color: d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)
+            };
+          }
+        }
       }
     });
     /* draw states on id #statesvg */
@@ -56384,6 +56538,42 @@ function popMapWithYear(currentYear) {
   } //}, 1500);
   // d3.select(self.frameElement).style("height", "600px");
 
+} // TURNING VOTE COUNT INTO STRING WITH COMMAS
+
+
+function addCommas(votes) {
+  if (votes >= 1000000) {
+    var millions = votes / 1000000 | 0;
+    var thousands = votes / 1000 % 1000 | 0;
+    var ones = votes % 1000;
+
+    if (thousands < 10) {
+      thousands = "00" + thousands;
+    } else if (thousands < 100) {
+      thousands = "0" + thousands;
+    }
+
+    if (ones < 10) {
+      ones = "00" + ones;
+    } else if (ones < 100) {
+      ones = "0" + ones;
+    }
+
+    votes = "" + millions + "," + thousands + "," + ones;
+  } else if (votes >= 1000) {
+    var thousands = votes / 1000 % 1000 | 0;
+    var ones = votes % 1000;
+
+    if (ones < 10) {
+      ones = "00" + ones;
+    } else if (ones < 100) {
+      ones = "0" + ones;
+    }
+
+    votes = "" + thousands + "," + ones;
+  }
+
+  return votes;
 } // PANOMARIC VIEW LOGIC
 
 
@@ -56393,10 +56583,19 @@ pan.addEventListener("click", panView);
 function panView() {
   for (var i = 0; i < timeouts.length; i++) {
     clearTimeout(timeouts[i]);
-  }
+  } //console.log(sliderTime.value());
+  //sliderTime.value(dataTime[0]);
+  //sliderChange();
+  // year count is amount of years we are working with (maybe should make a global constant)
 
-  timeouts.push(setTimeout(popMapWithYear, 0000, 1976));
-  timeouts.push(setTimeout(popMapWithYear, 0000, 1976));
+
+  var yearCount = 11;
+
+  for (var i = 0; i < yearCount; i++) {
+    timeouts.push(setTimeout(changeSlider, i * 1000, i));
+  } //timeouts.push(setTimeout(popMapWithYear, 0000, 1976));
+
+  /*timeouts.push(setTimeout(popMapWithYear, 0000, 1976));
   timeouts.push(setTimeout(popMapWithYear, 1000, 1980));
   timeouts.push(setTimeout(popMapWithYear, 2000, 1984));
   timeouts.push(setTimeout(popMapWithYear, 3000, 1988));
@@ -56406,7 +56605,13 @@ function panView() {
   timeouts.push(setTimeout(popMapWithYear, 7000, 2004));
   timeouts.push(setTimeout(popMapWithYear, 8000, 2008));
   timeouts.push(setTimeout(popMapWithYear, 9000, 2012));
-  timeouts.push(setTimeout(popMapWithYear, 10000, 2016));
+  timeouts.push(setTimeout(popMapWithYear, 10000, 2016));*/
+
+}
+
+function changeSlider(index) {
+  autoUpdating = true;
+  sliderTime.value(dataTime[index]);
 }
 /*pan.addEventListener("click", function(){
     setInterval(function(){
@@ -56417,209 +56622,5 @@ function panView() {
     }, 3000);
 });*/
 //console.log(map);
-},{"./election-data.json":"election-data.json"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
-var global = arguments[3];
-var OVERLAY_ID = '__parcel__error__overlay__';
-var OldModule = module.bundle.Module;
-
-function Module(moduleName) {
-  OldModule.call(this, moduleName);
-  this.hot = {
-    data: module.bundle.hotData,
-    _acceptCallbacks: [],
-    _disposeCallbacks: [],
-    accept: function (fn) {
-      this._acceptCallbacks.push(fn || function () {});
-    },
-    dispose: function (fn) {
-      this._disposeCallbacks.push(fn);
-    }
-  };
-  module.bundle.hotData = null;
-}
-
-module.bundle.Module = Module;
-var checkedAssets, assetsToAccept;
-var parent = module.bundle.parent;
-
-if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
-  var hostname = "" || location.hostname;
-  var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61620" + '/');
-
-  ws.onmessage = function (event) {
-    checkedAssets = {};
-    assetsToAccept = [];
-    var data = JSON.parse(event.data);
-
-    if (data.type === 'update') {
-      var handled = false;
-      data.assets.forEach(function (asset) {
-        if (!asset.isNew) {
-          var didAccept = hmrAcceptCheck(global.parcelRequire, asset.id);
-
-          if (didAccept) {
-            handled = true;
-          }
-        }
-      }); // Enable HMR for CSS by default.
-
-      handled = handled || data.assets.every(function (asset) {
-        return asset.type === 'css' && asset.generated.js;
-      });
-
-      if (handled) {
-        console.clear();
-        data.assets.forEach(function (asset) {
-          hmrApply(global.parcelRequire, asset);
-        });
-        assetsToAccept.forEach(function (v) {
-          hmrAcceptRun(v[0], v[1]);
-        });
-      } else if (location.reload) {
-        // `location` global exists in a web worker context but lacks `.reload()` function.
-        location.reload();
-      }
-    }
-
-    if (data.type === 'reload') {
-      ws.close();
-
-      ws.onclose = function () {
-        location.reload();
-      };
-    }
-
-    if (data.type === 'error-resolved') {
-      console.log('[parcel] ✨ Error resolved');
-      removeErrorOverlay();
-    }
-
-    if (data.type === 'error') {
-      console.error('[parcel] 🚨  ' + data.error.message + '\n' + data.error.stack);
-      removeErrorOverlay();
-      var overlay = createErrorOverlay(data);
-      document.body.appendChild(overlay);
-    }
-  };
-}
-
-function removeErrorOverlay() {
-  var overlay = document.getElementById(OVERLAY_ID);
-
-  if (overlay) {
-    overlay.remove();
-  }
-}
-
-function createErrorOverlay(data) {
-  var overlay = document.createElement('div');
-  overlay.id = OVERLAY_ID; // html encode message and stack trace
-
-  var message = document.createElement('div');
-  var stackTrace = document.createElement('pre');
-  message.innerText = data.error.message;
-  stackTrace.innerText = data.error.stack;
-  overlay.innerHTML = '<div style="background: black; font-size: 16px; color: white; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; padding: 30px; opacity: 0.85; font-family: Menlo, Consolas, monospace; z-index: 9999;">' + '<span style="background: red; padding: 2px 4px; border-radius: 2px;">ERROR</span>' + '<span style="top: 2px; margin-left: 5px; position: relative;">🚨</span>' + '<div style="font-size: 18px; font-weight: bold; margin-top: 20px;">' + message.innerHTML + '</div>' + '<pre>' + stackTrace.innerHTML + '</pre>' + '</div>';
-  return overlay;
-}
-
-function getParents(bundle, id) {
-  var modules = bundle.modules;
-
-  if (!modules) {
-    return [];
-  }
-
-  var parents = [];
-  var k, d, dep;
-
-  for (k in modules) {
-    for (d in modules[k][1]) {
-      dep = modules[k][1][d];
-
-      if (dep === id || Array.isArray(dep) && dep[dep.length - 1] === id) {
-        parents.push(k);
-      }
-    }
-  }
-
-  if (bundle.parent) {
-    parents = parents.concat(getParents(bundle.parent, id));
-  }
-
-  return parents;
-}
-
-function hmrApply(bundle, asset) {
-  var modules = bundle.modules;
-
-  if (!modules) {
-    return;
-  }
-
-  if (modules[asset.id] || !bundle.parent) {
-    var fn = new Function('require', 'module', 'exports', asset.generated.js);
-    asset.isNew = !modules[asset.id];
-    modules[asset.id] = [fn, asset.deps];
-  } else if (bundle.parent) {
-    hmrApply(bundle.parent, asset);
-  }
-}
-
-function hmrAcceptCheck(bundle, id) {
-  var modules = bundle.modules;
-
-  if (!modules) {
-    return;
-  }
-
-  if (!modules[id] && bundle.parent) {
-    return hmrAcceptCheck(bundle.parent, id);
-  }
-
-  if (checkedAssets[id]) {
-    return;
-  }
-
-  checkedAssets[id] = true;
-  var cached = bundle.cache[id];
-  assetsToAccept.push([bundle, id]);
-
-  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
-    return true;
-  }
-
-  return getParents(global.parcelRequire, id).some(function (id) {
-    return hmrAcceptCheck(global.parcelRequire, id);
-  });
-}
-
-function hmrAcceptRun(bundle, id) {
-  var cached = bundle.cache[id];
-  bundle.hotData = {};
-
-  if (cached) {
-    cached.hot.data = bundle.hotData;
-  }
-
-  if (cached && cached.hot && cached.hot._disposeCallbacks.length) {
-    cached.hot._disposeCallbacks.forEach(function (cb) {
-      cb(bundle.hotData);
-    });
-  }
-
-  delete bundle.cache[id];
-  bundle(id);
-  cached = bundle.cache[id];
-
-  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
-    cached.hot._acceptCallbacks.forEach(function (cb) {
-      cb();
-    });
-
-    return true;
-  }
-}
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","index.js"], null)
-//# sourceMappingURL=/src.e31bb0bc.js.map
+},{"./election-data.json":"N2yf"}]},{},["Focm"], null)
+//# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-us-election-history/src.86b27a91.js.map
