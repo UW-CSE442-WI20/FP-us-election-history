@@ -1,7 +1,9 @@
 {
   "candidates": {
     "democrat": "Humphrey",
-    "republican": "Nixon"
+    "republican": "Nixon",
+    "other": "Wallace",
+    "american independent": "Wallace"
   },
   "votes": {
     "AK": {
@@ -13,13 +15,15 @@
     "AL": {
       "electoral": {
         "democrat": 0,
-        "republican": 0
+        "republican": 0,
+        "american independent": 1
       }
     },
     "AR": {
       "electoral": {
         "democrat": 0,
-        "republican": 0
+        "republican": 0,
+        "american independent": 1
       }
     },
     "AZ": {
@@ -67,7 +71,8 @@
     "GA": {
       "electoral": {
         "democrat": 0,
-        "republican": 0
+        "republican": 0,
+        "american independent": 1
       }
     },
     "HI": {
@@ -115,7 +120,8 @@
     "LA": {
       "electoral": {
         "democrat": 0,
-        "republican": 0
+        "republican": 0,
+        "american independent": 1
       }
     },
     "MA": {
@@ -157,7 +163,8 @@
     "MS": {
       "electoral": {
         "democrat": 0,
-        "republican": 0
+        "republican": 0,
+        "american independent": 1
       }
     },
     "MT": {

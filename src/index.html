@@ -215,8 +215,8 @@
 <button id="play">Panoramic View</button>
 <script>
     // Time
-    var dataTime = d3.range(0, 11).map(function(d) {
-        return new Date(1976 + 4 * d, 10, 5);
+    var dataTime = d3.range(0, 29).map(function(d) {
+        return new Date(1904 + 4 * d, 10, 5);
     });
 
     var sliderTime = d3
@@ -224,7 +224,7 @@
             .min(d3.min(dataTime))
             .max(d3.max(dataTime))
             .step(1000 * 60 * 60 * 24 * 365 * 4)
-            .width(300)
+            .width(750)
             .tickFormat(d3.timeFormat('%Y'))
             .tickValues(dataTime)
             .default(new Date(1976, 10, 5)) // the initial year we start at
@@ -241,7 +241,7 @@
     var gTime = d3
         .select('div#slider-time')
         .append('svg')
-        .attr('width', 500)
+        .attr('width', 900)
         .attr('height', 100)
         .append('g')
         .attr('transform', 'translate(40,40)');

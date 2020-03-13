@@ -1,7 +1,8 @@
 {
   "candidates": {
     "democrat": "Davis",
-    "republican": "Coolidge"
+    "republican": "Coolidge",
+    "progressive": "La Follette"
   },
   "votes": {
     "AK": {
@@ -295,7 +296,8 @@
     "WI": {
       "electoral": {
         "democrat": 0,
-        "republican": 0
+        "republican": 0,
+        "progressive": 1
       }
     },
     "WV": {

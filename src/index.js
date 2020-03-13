@@ -1,5 +1,7 @@
 var obj = require("./election-data.json");
+//var total_years = 30;//how many years are in our graphic (currently not used)
 //console.log(obj);
+// Populating the map that saays who won each state in early elections (will update to include electoral vote)
 
 //console.log(obj.length);
 // If we are changin
@@ -54,6 +56,69 @@ for (var i = 0; i < obj.length; i++) {
     candidateMap.set(year, partyMap);
 }
 
+// map of json files per year
+jsonFiles = new Map();
+//jsonFiles.set(1900, require("./json/1900.json"));
+jsonFiles.set(1904, require("./json/1904.json"));
+jsonFiles.set(1908, require("./json/1908.json"));
+jsonFiles.set(1912, require("./json/1912.json"));
+jsonFiles.set(1916, require("./json/1916.json"));
+jsonFiles.set(1920, require("./json/1920.json"));
+jsonFiles.set(1924, require("./json/1924.json"));
+jsonFiles.set(1928, require("./json/1928.json"));
+jsonFiles.set(1932, require("./json/1932.json"));
+jsonFiles.set(1936, require("./json/1936.json"));
+jsonFiles.set(1940, require("./json/1940.json"));
+jsonFiles.set(1944, require("./json/1944.json"));
+jsonFiles.set(1948, require("./json/1948.json"));
+jsonFiles.set(1952, require("./json/1952.json"));
+jsonFiles.set(1956, require("./json/1956.json"));
+jsonFiles.set(1960, require("./json/1960.json"));
+jsonFiles.set(1964, require("./json/1964.json"));
+jsonFiles.set(1968, require("./json/1968.json"));
+jsonFiles.set(1972, require("./json/1972.json"));
+var stateWinners = new Map();
+for (var i = 1904; i < 1976; i += 4) {
+    var earlierYear = jsonFiles.get(i);
+    var earlyWinners = new Map();
+    var earlierMap = new Map();
+    var candidates = earlierYear['candidates'];
+    Object.keys(candidates).forEach(function (e) {
+        earlierMap.set(e, {
+        name: candidates[e],
+        votes: 0
+        });
+    });
+    // maybe always use electoral too
+    /*
+    MAYBE????
+
+
+    */
+    ["HI", "AK", "FL", "SC", "GA", "AL", "NC", "TN", "RI", "CT", "MA",
+    "ME", "NH", "VT", "NY", "NJ", "PA", "DE", "MD", "WV", "KY", "OH", 
+    "MI", "WY", "MT", "ID", "WA", "DC", "TX", "CA", "AZ", "NV", "UT", 
+    "CO", "NM", "OR", "ND", "SD", "NE", "IA", "MS", "IN", "IL", "MN", 
+    "WI", "MO", "AR", "OK", "KS", "LA", "VA"]
+        .forEach(function(d){
+            var results = earlierYear['votes'][d]['electoral'];
+            // currently only recording winner
+            var highest = 0;
+            var winner = 'NULL';// if state doesnt exist yet
+            Object.keys(results).forEach(function (e) {
+                evotes = results[e];
+                if (evotes > highest) {
+                    highest = evotes;
+                    winner = e;
+                }
+                earlierMap.get(e).votes += evotes;
+            })
+            earlyWinners[d] = winner;
+        });
+    candidateMap.set(i, earlierMap);
+    stateWinners[i] = earlyWinners;
+}
+
 var timeouts = [];
 
 
@@ -73,17 +138,19 @@ function populateTextMap() {
     textMap.set(2012, "The 2012 United States presidential election was the 57th quadrennial presidential election, held on Tuesday, November 6, 2012. The Democratic nominee, President Barack Obama, and his running mate, Vice President Joe Biden, were elected to a second term. They defeated the Republican ticket of businessman and former Governor Mitt Romney of Massachusetts and Representative Paul Ryan of Wisconsin.");
     textMap.set(2016, "The 2016 United States presidential election was the 58th quadrennial presidential election, held on Tuesday, November 8, 2016. The Republican ticket of businessman Donald Trump and Indiana Governor Mike Pence defeated the Democratic ticket of former Secretary of State Hillary Clinton and U.S. Senator from Virginia Tim Kaine, despite losing the popular vote. Trump took office as the 45th president, and Pence as the 48th vice president, on January 20, 2017.");
 }
-
 populateTextMap();
 
-//console.log(map);
-
-//console.log(map);
 //var title = document.getElementById("title-container");
-//console.log(title.textContent);
-//console.log(sliderTime.value().getYear() + 1900);
 function tooltipHtml(n, d){ /* function to create html content string in tooltip div. */
-    if (d.partyCount === 2) {
+    // d.partyCount == 1 means its before 1976
+    if (d.partyCount === 1) {
+        return "<h4>STATE DATA NOT AVAILABLE</h4><table>"+
+       // "<tr><td> Candidate </td><td>Party</td><td> Electoral Votes </td></tr>"+
+       // "<tr><td>" + d.demName + "</td><td>Democrat</td><td>"+(d.demVotes)+"</td><</tr>"+
+       // "<tr><td>" + d.repName + "</td><td>Republican</td><td>"+(d.repVotes)+"</td></tr>"+
+        "</table>";
+    }
+    else if (d.partyCount === 2) {
         return "<h4>"+n+"</h4><table>"+
         "<tr><td> Candidate </td><td>Party</td><td> Total Votes </td><td> Pct. </td></tr>"+
         "<tr><td>" + d.demName + "</td><td>Democrat</td><td>"+(d.demVotes)+"</td><td>"+(d.dem)+"</td></tr>"+
@@ -127,26 +194,53 @@ function sliderChange(val){
       d3.select('#democrat-container').text(candidateMap.get(currentYear).get("democrat").name);
       //console.log('made a call to on change, about to populate map');
       // lost popular vote ut won election
-      console.log(candidateMap.get(currentYear).get("republican").votes);
       if (currentYear == 2000 || currentYear == 2016) {
             d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name + "*");
             d3.select('#republican-container').style("font-weight", 900);
             d3.select('#democrat-container').style("font-weight", 100);
-            d3.select('#asterisk-container').text('* = Lost Popular Vote');
+            d3.select('#asterisk-container').text('* = Lost Popular Vote').style("background-color", "#FFFFFF")
+            .style("outline", "0px");
+      } else if (currentYear == 1924) { // coloring the third paarty for specific years where they got votes
+            d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name);
+            d3.select('#republican-container').style("font-weight", 900);
+            d3.select('#democrat-container').style("font-weight", 100);
+            d3.select('#asterisk-container').text(candidateMap.get(currentYear).get("progressive").name)
+            .style("outline", "2px solid #000000").style("background-color", "#88FF88").style("font-weight", 100);
+      } else if (currentYear == 1912) {
+            d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name);
+            d3.select('#republican-container').style("font-weight", 100);
+            d3.select('#democrat-container').style("font-weight", 900);
+            d3.select('#asterisk-container').text(candidateMap.get(currentYear).get("progressive").name)
+            .style("outline", "2px solid #000000").style("background-color", "#88FF88").style("font-weight", 100);
+      } else if (currentYear == 1948 || currentYear == 1960) {
+            d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name);
+            d3.select('#republican-container').style("font-weight", 100);
+            d3.select('#democrat-container').style("font-weight", 900);
+            d3.select('#asterisk-container').text(candidateMap.get(currentYear).get("other").name)
+            .style("outline", "2px solid #000000").style("background-color", "#FFB020").style("font-weight", 100);
+      } else if (currentYear == 1948 || currentYear == 1960) {
+            d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name);
+            d3.select('#republican-container').style("font-weight", 900);
+            d3.select('#democrat-container').style("font-weight", 100);
+            d3.select('#asterisk-container').text(candidateMap.get(currentYear).get("other").name)
+            .style("outline", "2px solid #000000").style("background-color", "#FFB020").style("font-weight", 100);
       }
       else if(candidateMap.get(currentYear).get("republican").votes > candidateMap.get(currentYear).get("democrat").votes){
             d3.select('#republican-container').style("font-weight", 900);
             d3.select('#democrat-container').style("font-weight", 100);
-            d3.select('#asterisk-container').text('');
+            d3.select('#asterisk-container').text('').style("background-color", "#FFFFFF").style("outline", "0px");
 
       } else {
             d3.select('#democrat-container').style("font-weight", 900);
             d3.select('#republican-container').style("font-weight", 100);
-            d3.select('#asterisk-container').text('');
+            d3.select('#asterisk-container').text('').style("background-color", "#FFFFFF").style("outline", "0px");
       }
       //populateMap();
       popMapWithYear(currentYear);
-      infoDiv.innerHTML = textMap.get(currentYear);
+      // no info yet for pre 76
+      if (currentYear > 1972) {
+        infoDiv.innerHTML = textMap.get(currentYear);
+    }
   }
 }
 
@@ -160,9 +254,27 @@ function popMapWithYear(currentYear) {
     let titleVar = document.getElementById("title-container");
     titleVar.innerHTML = "US Election Results in " + currentYear;
     // idk if this if statement is actually necessary/currently it is not being used
-    if (voteData.has(currentYear)) {
-        //console.log("TRUE");
-        uStates.draw("#statesvg", voteData.get(currentYear), tooltipHtml);
+    if (currentYear < 1976) {
+        earlyWinners = stateWinners[currentYear];
+        ["HI", "AK", "FL", "SC", "GA", "AL", "NC", "TN", "RI", "CT", "MA",
+        "ME", "NH", "VT", "NY", "NJ", "PA", "DE", "MD", "WV", "KY", "OH", 
+        "MI", "WY", "MT", "ID", "WA", "DC", "TX", "CA", "AZ", "NV", "UT", 
+        "CO", "NM", "OR", "ND", "SD", "NE", "IA", "MS", "IN", "IL", "MN", 
+        "WI", "MO", "AR", "OK", "KS", "LA", "VA"]
+            .forEach(function(d){
+                var winner = earlyWinners[d];
+                if(winner == "democrat") {
+                    sampleData[d] = {partyCount:1, color:d3.interpolate("#FFFFFF", "#8686FF")(1)};
+                } else if (winner == 'republican') {
+                    sampleData[d] = {partyCount:1, color:d3.interpolate("#FFFFFF", "#FF8686")(1)};
+                } else if (winner == 'progressive') {
+                    sampleData[d] = {partyCount:1, color:d3.interpolate("#FFFFFF", "#00FF00")(.5)};
+                } else if (winner == 'NULL') {
+                    sampleData[d] = {partyCount:1, color:d3.interpolate("#FFFFFF", "#000000")(.5)};
+                } else {
+                    sampleData[d] = {partyCount:1, color:d3.interpolate("#FFFFFF", "#FFB020")(1)};
+                }
+            });
     } else {
         //var currentYear = sliderTime.value().getYear() + 1900;
         //console.log(currentYear);
@@ -181,20 +293,36 @@ function popMapWithYear(currentYear) {
                 var info = map2.get(d);
                 var info2 = loserMap2.get(d);
                 var info3 = thirdPlace2.get(d);
-                var party = info[2]; // party of winner
                 var votes = info[0]; // raw votes of winner
                 var totalvotes = info[1]; // total overall votes
                 var loserVotes = info2[0]; // raw votes of second place
+                var party;
+                var tempName;
+                var winnerName;
+                var loserName;
+                if (votes > loserVotes) {
+                    party = info[2]; // party of winner
+                    tempName = info[3].split(",");
+                    winnerName = tempName[1] + " " + tempName[0];
+                    tempName = info2[3].split(",");
+                    loserName = tempName[1] + " " + tempName[0];
+                } else {
+                    var party = info2[2];
+                    var temp = loserVotes;
+                    loserVotes = votes;
+                    votes = temp;
+                    tempName = info2[3].split(",");
+                    winnerName = tempName[1] + " " + tempName[0];
+                    tempName = info[3].split(",");
+                    loserName = tempName[1] + " " + tempName[0];
+                }
+
                 var winningPercent = (1.0 * votes) / (votes + loserVotes);// fraction only including repub and dem (top 2)
                 winningPercent = Math.min(1, 4*(winningPercent - .42));
                 // winning percent is simply a ratio to decide coloring, not actual winning percent
                 var winPercent = Math.round((1000.0 * votes) / (totalvotes)) / 10; // this fraction includes other
                 var losePercent = Math.round((1000.0 * loserVotes) / (totalvotes)) / 10;
                 // IF THERE ARE ONLY 2 PARTIES WE ONLY DISPLAY TWO PARTIES    
-                var tempName = info[3].split(",");
-                var winnerName = tempName[1] + " " + tempName[0];
-                tempName = info2[3].split(",");
-                var loserName = tempName[1] + " " + tempName[0];
                 // Now breaking up strings so we have commas for vote count
                 strVotes = addCommas(votes);
                 strLoserVotes = addCommas(loserVotes);
@@ -265,8 +393,8 @@ function popMapWithYear(currentYear) {
     //console.log(sampleData);
     //setTimeout(function () {
         //voteData.set(currentYear, sampleData);
-        uStates.draw("#statesvg", sampleData, tooltipHtml);
     }
+    uStates.draw("#statesvg", sampleData, tooltipHtml);
     //}, 1500);
    // d3.select(self.frameElement).style("height", "600px");
 }
@@ -313,7 +441,7 @@ function panView() {
     //sliderTime.value(dataTime[0]);
     //sliderChange();
     // year count is amount of years we are working with (maybe should make a global constant)
-    var yearCount = 11
+    var yearCount = 29
     for (var i = 0; i < yearCount; i ++) {
         timeouts.push(setTimeout(changeSlider, i * 1000, i));
     }

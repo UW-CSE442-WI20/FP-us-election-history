@@ -222,7 +222,7 @@
     },
     "OK": {
       "electoral": {
-        "democrat": 0,
+        "democrat": 1,
         "republican": 0
       }
     },

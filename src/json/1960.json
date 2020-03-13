@@ -1,7 +1,9 @@
 {
   "candidates": {
     "democrat": "Kennedy",
-    "republican": "Nixon"
+    "republican": "Nixon",
+    "other": "Byrd",
+    "southern democrat": "Byrd"
   },
   "votes": {
     "AK": {
@@ -12,8 +14,9 @@
     },
     "AL": {
       "electoral": {
-        "democrat": 11,
-        "republican": 0
+        "democrat": 0,
+        "republican": 0,
+        "southern democrat": 1
       }
     },
     "AR": {
@@ -156,8 +159,9 @@
     },
     "MS": {
       "electoral": {
-        "democrat": 8,
-        "republican": 0
+        "democrat": 0,
+        "republican": 0,
+        "southern democrat": 1
       }
     },
     "MT": {

@@ -1,7 +1,8 @@
 {
   "candidates": {
     "democrat": "Wilson",
-    "republican": "Taft"
+    "republican": "Taft",
+    "progressive": "Roosevelt"
   },
   "votes": {
     "AK": {
@@ -31,7 +32,8 @@
     "CA": {
       "electoral": {
         "democrat": 0,
-        "republican": 0
+        "republican": 0,
+        "progressive": 1
       }
     },
     "CO": {
@@ -139,13 +141,15 @@
     "MI": {
       "electoral": {
         "democrat": 0,
-        "republican": 0
+        "republican": 0,
+        "progressive": 1
       }
     },
     "MN": {
       "electoral": {
         "democrat": 0,
-        "republican": 0
+        "republican": 0,
+        "progressive": 1
       }
     },
     "MO": {
@@ -235,7 +239,8 @@
     "PA": {
       "electoral": {
         "democrat": 0,
-        "republican": 0
+        "republican": 0,
+        "progressive": 1
       }
     },
     "RI": {
@@ -253,7 +258,8 @@
     "SD": {
       "electoral": {
         "democrat": 0,
-        "republican": 0
+        "republican": 0,
+        "progressive": 1
       }
     },
     "TN": {
@@ -289,7 +295,8 @@
     "WA": {
       "electoral": {
         "democrat": 0,
-        "republican": 0
+        "republican": 0,
+        "progressive": 1
       }
     },
     "WI": {
