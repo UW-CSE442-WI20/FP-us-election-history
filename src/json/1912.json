@@ -33,7 +33,7 @@
       "electoral": {
         "democrat": 0,
         "republican": 0,
-        "progressive": 1
+        "progressive": 13
       }
     },
     "CO": {
@@ -142,14 +142,14 @@
       "electoral": {
         "democrat": 0,
         "republican": 0,
-        "progressive": 1
+        "progressive": 15
       }
     },
     "MN": {
       "electoral": {
         "democrat": 0,
         "republican": 0,
-        "progressive": 1
+        "progressive": 12
       }
     },
     "MO": {
@@ -240,7 +240,7 @@
       "electoral": {
         "democrat": 0,
         "republican": 0,
-        "progressive": 1
+        "progressive": 38
       }
     },
     "RI": {
@@ -259,7 +259,7 @@
       "electoral": {
         "democrat": 0,
         "republican": 0,
-        "progressive": 1
+        "progressive": 5
       }
     },
     "TN": {
@@ -296,7 +296,7 @@
       "electoral": {
         "democrat": 0,
         "republican": 0,
-        "progressive": 1
+        "progressive": 7
       }
     },
     "WI": {

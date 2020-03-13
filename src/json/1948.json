@@ -16,7 +16,7 @@
       "electoral": {
         "democrat": 0,
         "republican": 0,
-        "Dixiecrat": 1
+        "Dixiecrat": 11
       }
     },
     "AR": {
@@ -119,7 +119,7 @@
       "electoral": {
         "democrat": 0,
         "republican": 0,
-        "Dixiecrat": 1
+        "Dixiecrat": 10
       }
     },
     "MA": {
@@ -162,7 +162,7 @@
       "electoral": {
         "democrat": 0,
         "republican": 0,
-        "Dixiecrat": 1
+        "Dixiecrat": 9
       }
     },
     "MT": {
@@ -253,7 +253,7 @@
       "electoral": {
         "democrat": 0,
         "republican": 0,
-        "Dixiecrat": 1
+        "Dixiecrat": 8
       }
     },
     "SD": {

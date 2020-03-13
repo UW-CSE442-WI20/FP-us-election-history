@@ -14,6 +14,7 @@ var map = new Map();
 var loserMap = new Map();
 var thirdPlaceMap = new Map();
 var candidateMap = new Map();
+var mapState = 0; // 0 is abbreviations, 1 is electoral vote, 2 is neither
 for (var i = 0; i < obj.length; i++) {
     var year = obj[i].year;
     var map2;
@@ -77,8 +78,20 @@ jsonFiles.set(1960, require("./json/1960.json"));
 jsonFiles.set(1964, require("./json/1964.json"));
 jsonFiles.set(1968, require("./json/1968.json"));
 jsonFiles.set(1972, require("./json/1972.json"));
+jsonFiles.set(1976, require("./json/1976.json"));
+jsonFiles.set(1980, require("./json/1980.json"));
+jsonFiles.set(1984, require("./json/1984.json"));
+jsonFiles.set(1988, require("./json/1988.json"));
+jsonFiles.set(1992, require("./json/1992.json"));
+jsonFiles.set(1996, require("./json/1996.json"));
+jsonFiles.set(2000, require("./json/2000.json"));
+jsonFiles.set(2004, require("./json/2004.json"));
+jsonFiles.set(2008, require("./json/2008.json"));
+jsonFiles.set(2012, require("./json/2012.json"));
+// do 2016 map separately
+var stateValues = new Map(); // map from year to a map from state to EV value
 var stateWinners = new Map();
-for (var i = 1904; i < 1976; i += 4) {
+for (var i = 1904; i < 2016; i += 4) {
     var earlierYear = jsonFiles.get(i);
     var earlyWinners = new Map();
     var earlierMap = new Map();
@@ -89,12 +102,11 @@ for (var i = 1904; i < 1976; i += 4) {
         votes: 0
         });
     });
+
     // maybe always use electoral too
-    /*
-    MAYBE????
+    
 
-
-    */
+    currYearElectorates = new Map();
     ["HI", "AK", "FL", "SC", "GA", "AL", "NC", "TN", "RI", "CT", "MA",
     "ME", "NH", "VT", "NY", "NJ", "PA", "DE", "MD", "WV", "KY", "OH", 
     "MI", "WY", "MT", "ID", "WA", "DC", "TX", "CA", "AZ", "NV", "UT", 
@@ -104,9 +116,11 @@ for (var i = 1904; i < 1976; i += 4) {
             var results = earlierYear['votes'][d]['electoral'];
             // currently only recording winner
             var highest = 0;
+            var value = 0;
             var winner = 'NULL';// if state doesnt exist yet
             Object.keys(results).forEach(function (e) {
                 evotes = results[e];
+                value += evotes;
                 if (evotes > highest) {
                     highest = evotes;
                     winner = e;
@@ -114,13 +128,15 @@ for (var i = 1904; i < 1976; i += 4) {
                 earlierMap.get(e).votes += evotes;
             })
             earlyWinners[d] = winner;
+            currYearElectorates[d] = value;
         });
     candidateMap.set(i, earlierMap);
     stateWinners[i] = earlyWinners;
+    stateValues.set(i, currYearElectorates);
 }
-
 var timeouts = [];
-
+// 2016 is same as 2012 so don't need to do separately
+stateValues.set(2016, stateValues.get(2012));
 
 var textMap = new Map();
 var infoDiv = document.getElementById("info");
@@ -199,41 +215,46 @@ function sliderChange(val){
             d3.select('#republican-container').style("font-weight", 900);
             d3.select('#democrat-container').style("font-weight", 100);
             d3.select('#asterisk-container').text('* = Lost Popular Vote').style("background-color", "#FFFFFF")
-            .style("outline", "0px");
+            .style("outline", "0px").style("height", "20px");
       } else if (currentYear == 1924) { // coloring the third paarty for specific years where they got votes
             d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name);
             d3.select('#republican-container').style("font-weight", 900);
             d3.select('#democrat-container').style("font-weight", 100);
             d3.select('#asterisk-container').text(candidateMap.get(currentYear).get("progressive").name)
-            .style("outline", "2px solid #000000").style("background-color", "#88FF88").style("font-weight", 100);
+            .style("outline", "2px solid #000000").style("background-color", "#88FF88").style("font-weight", 100)
+            .style("height", "50px");
       } else if (currentYear == 1912) {
             d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name);
             d3.select('#republican-container').style("font-weight", 100);
             d3.select('#democrat-container').style("font-weight", 900);
             d3.select('#asterisk-container').text(candidateMap.get(currentYear).get("progressive").name)
-            .style("outline", "2px solid #000000").style("background-color", "#88FF88").style("font-weight", 100);
+            .style("outline", "2px solid #000000").style("background-color", "#88FF88").style("font-weight", 100)
+            .style("height", "50px");
       } else if (currentYear == 1948 || currentYear == 1960) {
             d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name);
             d3.select('#republican-container').style("font-weight", 100);
             d3.select('#democrat-container').style("font-weight", 900);
             d3.select('#asterisk-container').text(candidateMap.get(currentYear).get("other").name)
-            .style("outline", "2px solid #000000").style("background-color", "#FFB020").style("font-weight", 100);
-      } else if (currentYear == 1948 || currentYear == 1960) {
+            .style("outline", "2px solid #000000").style("background-color", "#FFB020").style("font-weight", 100)
+            .style("height", "50px");
+      } /*else if (currentYear == 1948 || currentYear == 1960) {
             d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name);
             d3.select('#republican-container').style("font-weight", 900);
             d3.select('#democrat-container').style("font-weight", 100);
             d3.select('#asterisk-container').text(candidateMap.get(currentYear).get("other").name)
             .style("outline", "2px solid #000000").style("background-color", "#FFB020").style("font-weight", 100);
-      }
+      }*/
       else if(candidateMap.get(currentYear).get("republican").votes > candidateMap.get(currentYear).get("democrat").votes){
             d3.select('#republican-container').style("font-weight", 900);
             d3.select('#democrat-container').style("font-weight", 100);
-            d3.select('#asterisk-container').text('').style("background-color", "#FFFFFF").style("outline", "0px");
+            d3.select('#asterisk-container').text('').style("background-color", "#FFFFFF").style("outline", "0px")
+            .style("height", "10px");
 
       } else {
             d3.select('#democrat-container').style("font-weight", 900);
             d3.select('#republican-container').style("font-weight", 100);
-            d3.select('#asterisk-container').text('').style("background-color", "#FFFFFF").style("outline", "0px");
+            d3.select('#asterisk-container').text('').style("background-color", "#FFFFFF").style("outline", "0px")
+            .style("height", "10px");
       }
       //populateMap();
       popMapWithYear(currentYear);
@@ -254,6 +275,7 @@ function popMapWithYear(currentYear) {
     let titleVar = document.getElementById("title-container");
     titleVar.innerHTML = "US Election Results in " + currentYear;
     // idk if this if statement is actually necessary/currently it is not being used
+    var currYearElectorates = stateValues.get(currentYear);
     if (currentYear < 1976) {
         earlyWinners = stateWinners[currentYear];
         ["HI", "AK", "FL", "SC", "GA", "AL", "NC", "TN", "RI", "CT", "MA",
@@ -264,15 +286,15 @@ function popMapWithYear(currentYear) {
             .forEach(function(d){
                 var winner = earlyWinners[d];
                 if(winner == "democrat") {
-                    sampleData[d] = {partyCount:1, color:d3.interpolate("#FFFFFF", "#8686FF")(1)};
+                    sampleData[d] = {mapStat:mapState, stateWorth:currYearElectorates[d], partyCount:1, color:d3.interpolate("#FFFFFF", "#8686FF")(1)};
                 } else if (winner == 'republican') {
-                    sampleData[d] = {partyCount:1, color:d3.interpolate("#FFFFFF", "#FF8686")(1)};
+                    sampleData[d] = {mapStat:mapState, stateWorth:currYearElectorates[d], partyCount:1, color:d3.interpolate("#FFFFFF", "#FF8686")(1)};
                 } else if (winner == 'progressive') {
-                    sampleData[d] = {partyCount:1, color:d3.interpolate("#FFFFFF", "#00FF00")(.5)};
+                    sampleData[d] = {mapStat:mapState, stateWorth:currYearElectorates[d], partyCount:1, color:d3.interpolate("#FFFFFF", "#00FF00")(.5)};
                 } else if (winner == 'NULL') {
-                    sampleData[d] = {partyCount:1, color:d3.interpolate("#FFFFFF", "#000000")(.5)};
+                    sampleData[d] = {mapStat:mapState, stateWorth:currYearElectorates[d], partyCount:1, color:d3.interpolate("#FFFFFF", "#000000")(.5)};
                 } else {
-                    sampleData[d] = {partyCount:1, color:d3.interpolate("#FFFFFF", "#FFB020")(1)};
+                    sampleData[d] = {mapStat:mapState, stateWorth:currYearElectorates[d], partyCount:1, color:d3.interpolate("#FFFFFF", "#FFB020")(1)};
                 }
             });
     } else {
@@ -335,9 +357,9 @@ function popMapWithYear(currentYear) {
                 }
                 if (info3 == null) {
                     if(party == "democrat") {
-                        sampleData[d] = {demName:winnerName, repName:loserName, partyCount:2, dem:winPercent, rep:losePercent, demVotes:strVotes, repVotes:strLoserVotes, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
+                        sampleData[d] = {mapStat:mapState, stateWorth:currYearElectorates[d], demName:winnerName, repName:loserName, partyCount:2, dem:winPercent, rep:losePercent, demVotes:strVotes, repVotes:strLoserVotes, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
                     } else {
-                        sampleData[d] = {demName:loserName, repName:winnerName, partyCount:2, dem:losePercent, rep:winPercent, demVotes:strLoserVotes, repVotes:strVotes, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
+                        sampleData[d] = {mapStat:mapState, stateWorth:currYearElectorates[d], demName:loserName, repName:winnerName, partyCount:2, dem:losePercent, rep:winPercent, demVotes:strLoserVotes, repVotes:strVotes, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
                     }                
                 }
                 else {
@@ -368,23 +390,23 @@ function popMapWithYear(currentYear) {
                     thirdVotes = addCommas(thirdVotes);
                     if (otherVotes === 0) {
                         if(party == "democrat") {
-                            sampleData[d] = {otherName:otherName, demName:winnerName, repName:loserName,partyCount:3, dem:winPercent, demVotes:strVotes, repVotes:strLoserVotes, rep:losePercent, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
+                            sampleData[d] = {mapStat:mapState, stateWorth:currYearElectorates[d], otherName:otherName, demName:winnerName, repName:loserName,partyCount:3, dem:winPercent, demVotes:strVotes, repVotes:strLoserVotes, rep:losePercent, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
                         } else {
-                            sampleData[d] = {otherName:otherName, demName:loserName, repName:winnerName,partyCount:3, dem:losePercent, demVotes:strLoserVotes, repVotes:strVotes, rep:winPercent, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
+                            sampleData[d] = {mapStat:mapState, stateWorth:currYearElectorates[d], otherName:otherName, demName:loserName, repName:winnerName,partyCount:3, dem:losePercent, demVotes:strLoserVotes, repVotes:strVotes, rep:winPercent, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
                         }
                     } else {
                     // if second place is independent (ross perot 1992), still properly show stuff
                         if (info2[2] === 'independent') {
                             if(party == "democrat") {
-                                sampleData[d] = {otherName:loserName, demName:winnerName, repName:otherName,partyCount:4, dem:winPercent, demVotes:strVotes, repVotes:thirdVotes, rep:thirdPlacePercent, other:otherPercent, otherVotes:otherVotes, thirdPartyOne:'Independent', thirdPartyVotes:strLoserVotes, thirdVotes:losePercent, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
+                                sampleData[d] = {mapStat:mapState, stateWorth:currYearElectorates[d], otherName:loserName, demName:winnerName, repName:otherName,partyCount:4, dem:winPercent, demVotes:strVotes, repVotes:thirdVotes, rep:thirdPlacePercent, other:otherPercent, otherVotes:otherVotes, thirdPartyOne:'Independent', thirdPartyVotes:strLoserVotes, thirdVotes:losePercent, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
                         } else {
-                                sampleData[d] = {otherName:loserName, demName:otherName, repName:winnerName,partyCount:4, dem:thirdPlacePercent, demVotes:thirdVotes, repVotes:strVotes, rep:winPercent, other:otherPercent, otherVotes:otherVotes, thirdPartyOne:'Independent', thirdPartyVotes:strLoserVotes, thirdVotes:losePercent, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
+                                sampleData[d] = {mapStat:mapState, stateWorth:currYearElectorates[d], otherName:loserName, demName:otherName, repName:winnerName,partyCount:4, dem:thirdPlacePercent, demVotes:thirdVotes, repVotes:strVotes, rep:winPercent, other:otherPercent, otherVotes:otherVotes, thirdPartyOne:'Independent', thirdPartyVotes:strLoserVotes, thirdVotes:losePercent, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
                             }
                         }
                         else if(party == "democrat") {
-                            sampleData[d] = {otherName:otherName, demName:winnerName, repName:loserName,partyCount:4, dem:winPercent, demVotes:strVotes, repVotes:strLoserVotes, rep:losePercent, other:otherPercent, otherVotes:otherVotes, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
+                            sampleData[d] = {mapStat:mapState, stateWorth:currYearElectorates[d], otherName:otherName, demName:winnerName, repName:loserName,partyCount:4, dem:winPercent, demVotes:strVotes, repVotes:strLoserVotes, rep:losePercent, other:otherPercent, otherVotes:otherVotes, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
                         } else {
-                            sampleData[d] = {otherName:otherName, demName:loserName, repName:winnerName,partyCount:4, dem:losePercent, demVotes:strLoserVotes, repVotes:strVotes, rep:winPercent, other:otherPercent, otherVotes:otherVotes, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
+                            sampleData[d] = {mapStat:mapState, stateWorth:currYearElectorates[d], otherName:otherName, demName:loserName, repName:winnerName,partyCount:4, dem:losePercent, demVotes:strLoserVotes, repVotes:strVotes, rep:winPercent, other:otherPercent, otherVotes:otherVotes, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
                         }
                     }
                 }
@@ -431,19 +453,37 @@ function addCommas(votes) {
 // PANOMARIC VIEW LOGIC
 
 var pan = document.getElementById("play");
-pan.addEventListener("click", panView);
+pan.addEventListener("click", panViewFromStart);//start at og year
+var pan2 = document.getElementById("play2");
+pan2.addEventListener("click", panView);// play from current year
 
-function panView() {
+// 3 map states for what to display
+var opt1 = document.getElementById("opt1");
+opt1.addEventListener("click", function d () {
+    mapState = 0;
+    popMapWithYear(publicYear);
+});
+
+var opt2 = document.getElementById("opt2");
+opt2.addEventListener("click", function d () {
+    mapState = 1;
+    popMapWithYear(publicYear);
+});
+
+var opt3 = document.getElementById("opt3");
+opt3.addEventListener("click", function d () {
+    mapState = 2;
+    popMapWithYear(publicYear);
+});
+
+function panViewFromStart() {
+   // console.log(year);
     for (var i = 0; i < timeouts.length; i++) {
         clearTimeout(timeouts[i]);
     }
-    //console.log(sliderTime.value());
-    //sliderTime.value(dataTime[0]);
-    //sliderChange();
-    // year count is amount of years we are working with (maybe should make a global constant)
-    var yearCount = 29
+    var yearCount = 29;
     for (var i = 0; i < yearCount; i ++) {
-        timeouts.push(setTimeout(changeSlider, i * 1000, i));
+        timeouts.push(setTimeout(changeSlider, i * 1500, i));
     }
     //timeouts.push(setTimeout(popMapWithYear, 0000, 1976));
     /*timeouts.push(setTimeout(popMapWithYear, 0000, 1976));
@@ -457,6 +497,22 @@ function panView() {
     timeouts.push(setTimeout(popMapWithYear, 8000, 2008));
     timeouts.push(setTimeout(popMapWithYear, 9000, 2012));
     timeouts.push(setTimeout(popMapWithYear, 10000, 2016));*/
+}
+
+function panView() {
+    for (var i = 0; i < timeouts.length; i++) {
+        clearTimeout(timeouts[i]);
+    }
+    //console.log(sliderTime.value());
+    //sliderTime.value(dataTime[0]);
+    //sliderChange();
+    // year count is amount of years we are working with (maybe should make a global constant)
+    var year = publicYear;
+    var yearCount = 29;
+    var startYear = (year - 1904) / 4;//what the starting point is
+    for (var i = startYear + 1; i < yearCount; i ++) {
+        timeouts.push(setTimeout(changeSlider, (i - startYear - 1) * 1500, i));
+    }
 }
 
 function changeSlider(index) {

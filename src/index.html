@@ -148,20 +148,36 @@
         #asterisk-container {
             display: table;
             background-color: 'red';
-            height: 25px;
-            font-size: 24px;
+            height: 50px;
+            font-size: 30px;
             margin: 0 auto;
+            margin-bottom: 10px;
             width: 300px;
             text-align: center;
             vertical-align: middle;
             font-weight: 200;
         }
 
-		#info {
-			display: inline-block;
-			border: solid black 2px;
-			text-align: center;
-		}
+		#color-gradient {
+            width: 500px;
+            height: 10px;
+            background: linear-gradient(to right, red, white, blue);
+        }
+
+        #info {
+            display: inline-block;
+            border: solid black 2px;
+            text-align: center;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: row;
+        }
+
+        #demo-text {
+            margin-left: 189px;
+        }
 
         #writeup {
             display: table;
@@ -208,11 +224,22 @@
 <div class="row align-items-center">
     <div class="col-sm-2"><p id="value-time"></p></div>
     <div class="col-sm">
+        <div id="container">
+            <div>Republican Landslide</div>
+            <div id="demo-text">Democratic Landslide</div>
+        </div>
+        <div id="color-gradient"></div>
         <div id="slider-time"></div>
     </div>
 </div>
-<button id='writeup'></button>
-<button id="play">Panoramic View</button>
+<!--<button id='writeup'></button>-->
+<button id="play">Play From Beginning</button>
+<button id="play2">Play From Here</button>
+
+<button id="opt1">View State Abbreviations</button>
+<button id="opt2">View State Electoral Votes</button>
+<button id="opt3">Hide State Labels</button>
+
 <script>
     // Time
     var dataTime = d3.range(0, 29).map(function(d) {
@@ -295,5 +322,6 @@
     d3.select(self.frameElement).style("height", "600px");*/
 </script>
 <script src="./index.js"></script>
+
 </body>
 </html>

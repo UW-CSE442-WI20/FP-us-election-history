@@ -16,14 +16,14 @@
       "electoral": {
         "democrat": 0,
         "republican": 0,
-        "american independent": 1
+        "american independent": 10
       }
     },
     "AR": {
       "electoral": {
         "democrat": 0,
         "republican": 0,
-        "american independent": 1
+        "american independent": 6
       }
     },
     "AZ": {
@@ -72,7 +72,7 @@
       "electoral": {
         "democrat": 0,
         "republican": 0,
-        "american independent": 1
+        "american independent": 12
       }
     },
     "HI": {
@@ -121,7 +121,7 @@
       "electoral": {
         "democrat": 0,
         "republican": 0,
-        "american independent": 1
+        "american independent": 10
       }
     },
     "MA": {
@@ -164,7 +164,7 @@
       "electoral": {
         "democrat": 0,
         "republican": 0,
-        "american independent": 1
+        "american independent": 7
       }
     },
     "MT": {

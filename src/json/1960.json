@@ -16,7 +16,7 @@
       "electoral": {
         "democrat": 0,
         "republican": 0,
-        "southern democrat": 1
+        "southern democrat": 11
       }
     },
     "AR": {
@@ -161,7 +161,7 @@
       "electoral": {
         "democrat": 0,
         "republican": 0,
-        "southern democrat": 1
+        "southern democrat": 8
       }
     },
     "MT": {
