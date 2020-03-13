@@ -183,8 +183,6 @@ function popMapWithYear(currentYear) {
                 var info3 = thirdPlace2.get(d);
                 var party = info[2]; // party of winner
                 var votes = info[0]; // raw votes of winner
-                console.log(d);
-                console.log(votes);
                 var totalvotes = info[1]; // total overall votes
                 var loserVotes = info2[0]; // raw votes of second place
                 var winningPercent = (1.0 * votes) / (votes + loserVotes);// fraction only including repub and dem (top 2)
