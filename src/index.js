@@ -32,6 +32,7 @@ for (var i = 0; i < obj.length; i++) {
         partyMap.get(obj[i].party)
     }
     var state = obj[i].state_po;
+    // ARE ONLY USING THE STATE_PO, candidate votes, total votes, party, cadidate
     var votes = [obj[i].candidatevotes, obj[i].totalvotes, obj[i].party, obj[i].candidate];
     if (!map2.has(state)) {
         map2.set(state, votes);
@@ -126,6 +127,7 @@ function sliderChange(val){
       d3.select('#democrat-container').text(candidateMap.get(currentYear).get("democrat").name);
       //console.log('made a call to on change, about to populate map');
       // lost popular vote ut won election
+      console.log(candidateMap.get(currentYear).get("republican").votes);
       if (currentYear == 2000 || currentYear == 2016) {
             d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name + "*");
             d3.select('#republican-container').style("font-weight", 900);
@@ -181,6 +183,8 @@ function popMapWithYear(currentYear) {
                 var info3 = thirdPlace2.get(d);
                 var party = info[2]; // party of winner
                 var votes = info[0]; // raw votes of winner
+                console.log(d);
+                console.log(votes);
                 var totalvotes = info[1]; // total overall votes
                 var loserVotes = info2[0]; // raw votes of second place
                 var winningPercent = (1.0 * votes) / (votes + loserVotes);// fraction only including repub and dem (top 2)
@@ -217,7 +221,7 @@ function popMapWithYear(currentYear) {
                     var otherName;
                     var otherPercent;
                     // if there are only 3 things/there is no third person listed (the third person is other)
-                    if (info3[3] === 'Other' || info3[3] === '') {
+                    if (info3[2] === 'Other' || info3[2] === '' || info3[3] === 'Other' || info3[3] === '') {
                         otherName = 'Other';
                         thirdVotes += otherVotes;
                         thirdParty = 'N/A';
@@ -243,7 +247,15 @@ function popMapWithYear(currentYear) {
                             sampleData[d] = {otherName:otherName, demName:loserName, repName:winnerName,partyCount:3, dem:losePercent, demVotes:strLoserVotes, repVotes:strVotes, rep:winPercent, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
                         }
                     } else {
-                        if(party == "democrat") {
+                    // if second place is independent (ross perot 1992), still properly show stuff
+                        if (info2[2] === 'independent') {
+                            if(party == "democrat") {
+                                sampleData[d] = {otherName:loserName, demName:winnerName, repName:otherName,partyCount:4, dem:winPercent, demVotes:strVotes, repVotes:thirdVotes, rep:thirdPlacePercent, other:otherPercent, otherVotes:otherVotes, thirdPartyOne:'Independent', thirdPartyVotes:strLoserVotes, thirdVotes:losePercent, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
+                        } else {
+                                sampleData[d] = {otherName:loserName, demName:otherName, repName:winnerName,partyCount:4, dem:thirdPlacePercent, demVotes:thirdVotes, repVotes:strVotes, rep:winPercent, other:otherPercent, otherVotes:otherVotes, thirdPartyOne:'Independent', thirdPartyVotes:strLoserVotes, thirdVotes:losePercent, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
+                            }
+                        }
+                        else if(party == "democrat") {
                             sampleData[d] = {otherName:otherName, demName:winnerName, repName:loserName,partyCount:4, dem:winPercent, demVotes:strVotes, repVotes:strLoserVotes, rep:losePercent, other:otherPercent, otherVotes:otherVotes, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#0015BC")(winningPercent)};
                         } else {
                             sampleData[d] = {otherName:otherName, demName:loserName, repName:winnerName,partyCount:4, dem:losePercent, demVotes:strLoserVotes, repVotes:strVotes, rep:winPercent, other:otherPercent, otherVotes:otherVotes, thirdPartyOne:thirdParty, thirdPartyVotes:thirdVotes, thirdVotes:thirdPlacePercent, color:d3.interpolate("#FFFFFF", "#E9141D")(winningPercent)};
