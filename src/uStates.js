@@ -56,12 +56,14 @@
 	var uStates={};
 	this.uStates = uStates;
 	uStates.draw = function(id, data, toolTip){
+		d3.select('svg').selectAll('*').remove();
 		function mouseOver(d){
 			d3.select("#tooltip").transition().duration(200).style("opacity", .9);      
 			
 			d3.select("#tooltip").html(toolTip(d.n, data[d.id]))  
 				.style("left", (d3.event.pageX) + "px")     
 				.style("top", (d3.event.pageY - 28) + "px");
+			d3.select("#statesvg").style("color", "BLUE");
 		}
 
 		function mouseOut(){
