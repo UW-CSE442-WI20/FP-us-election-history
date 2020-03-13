@@ -277,11 +277,12 @@ function sliderChange(val){
       //populateMap();
       popMapWithYear(currentYear);
       // no info yet for pre 76
-      if (currentYear > 1972) {
-        infoDiv.innerHTML = textMap.get(currentYear);
-    } else {
-        infoDiv.innerHTML = "";
-    }
+      /*if (currentYear > 1972) {
+            infoDiv.innerHTML = textMap.get(currentYear);
+        } else {
+            infoDiv.innerHTML = "";
+        }*/
+    infoDiv.innerHTML = textMap.get(currentYear);
   }
 }
 
