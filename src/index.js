@@ -261,6 +261,8 @@ function sliderChange(val){
       // no info yet for pre 76
       if (currentYear > 1972) {
         infoDiv.innerHTML = textMap.get(currentYear);
+    } else {
+        infoDiv.innerHTML = "";
     }
   }
 }
@@ -340,7 +342,7 @@ function popMapWithYear(currentYear) {
                 }
 
                 var winningPercent = (1.0 * votes) / (votes + loserVotes);// fraction only including repub and dem (top 2)
-                winningPercent = Math.min(1, 4*(winningPercent - .42));
+                winningPercent = Math.min(1, 4*(winningPercent - .43));
                 // winning percent is simply a ratio to decide coloring, not actual winning percent
                 var winPercent = Math.round((1000.0 * votes) / (totalvotes)) / 10; // this fraction includes other
                 var losePercent = Math.round((1000.0 * loserVotes) / (totalvotes)) / 10;
