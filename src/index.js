@@ -141,6 +141,8 @@ stateValues.set(2016, stateValues.get(2012));
 var textMap = new Map();
 var infoDiv = document.getElementById("info");
 
+var bigContainer = document.getElementById("big-container");
+
 function populateTextMap() {
     textMap.set(1976, "The 1976 United States presidential election was the 48th quadrennial presidential election. It was held on Tuesday, November 2, 1976. Democrat Jimmy Carter of Georgia defeated incumbent Republican President Gerald Ford from Michigan. Carter's win represented the lone Democratic victory in a presidential election held between 1968 and 1992.");
     textMap.set(1980, "The 1980 United States presidential election was the 49th quadrennial presidential election. It was held on Tuesday, November 4, 1980. Republican nominee Ronald Reagan defeated incumbent Democrat Jimmy Carter. Due to the rise of conservatism following Reagan's victory, some historians consider the election to be a realigning election that marked the start of the Reagan Era.");
@@ -283,6 +285,11 @@ function sliderChange(val){
             infoDiv.innerHTML = "";
         }*/
     infoDiv.innerHTML = textMap.get(currentYear);
+    if (currentYear < 1976) {
+        bigContainer.style.display = "none";
+    } else {
+        bigContainer.style.display = "block";
+    }
   }
 }
 
