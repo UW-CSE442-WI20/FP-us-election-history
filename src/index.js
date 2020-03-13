@@ -261,9 +261,12 @@ function sliderChange(val){
       // no info yet for pre 76
       if (currentYear > 1972) {
         infoDiv.innerHTML = textMap.get(currentYear);
+        infoDiv.hidden = false;
     } else {
         infoDiv.innerHTML = "";
+        infoDiv.hidden = true;
     }
+
   }
 }
 

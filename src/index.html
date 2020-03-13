@@ -166,8 +166,9 @@
 
         #info {
             display: inline-block;
-            border: solid black 2px;
+            border: dashed black 2px;
             text-align: center;
+            padding: 10px;
         }
 
         #container {
@@ -177,12 +178,6 @@
 
         #rep-text {
             margin-left: 223px;
-		}
-
-		#info {
-			display: inline-block;
-			border: solid black 2px;
-			text-align: center;
 		}
 
 		#container {
@@ -198,6 +193,25 @@
             width: 100px;
             text-align: center;
             vertical-align: middle;
+        }
+
+        .menu-button {
+            /*width: 130px;*/
+            /*height: 40px;*/
+            background: linear-gradient(to bottom, #9c74e5 0%, #745bb5 100%); /* W3C */
+            border: none;
+            border-radius: 5px;
+            position: relative;
+            border-bottom: 4px solid #4c4587;
+            color: #fbfbfb;
+            font-weight: 600;
+            font-family: 'Open Sans', sans-serif;
+            text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+            font-size: 15px;
+            text-align: left;
+            text-indent: 5px;
+            box-shadow: 0px 3px 0px 0px rgba(0,0,0,.2);
+            cursor: pointer;
         }
 
     </style>
@@ -222,7 +236,7 @@
             <div id="republican-container"></div>
             <div id="democrat-container"></div>
 			<div id="asterisk-container"></div>
-			<div id="info">The 1976 United States presidential election was the 48th quadrennial presidential election. It was held on Tuesday, November 2, 1976. Democrat Jimmy Carter of Georgia defeated incumbent Republican President Gerald Ford from Michigan. Carter's win represented the lone Democratic victory in a presidential election held between 1968 and 1992.</div>
+			<div id="info" >The 1976 United States presidential election was the 48th quadrennial presidential election. It was held on Tuesday, November 2, 1976. Democrat Jimmy Carter of Georgia defeated incumbent Republican President Gerald Ford from Michigan. Carter's win represented the lone Democratic victory in a presidential election held between 1968 and 1992.</div>
 		</div>
     </div>
     <script src="uStates.js"></script> <!-- creates uStates. -->
@@ -247,12 +261,12 @@
     </div>
 </div>
 <!--<button id='writeup'></button>-->
-<button id="play">Play From Beginning</button>
-<button id="play2">Play From Here</button>
+<button class="menu-button" id="play">Play From Beginning</button>
+<button class="menu-button" id="play2">Play From Here</button>
 
-<button id="opt1">View State Abbreviations</button>
-<button id="opt2">View State Electoral Votes</button>
-<button id="opt3">Hide State Labels</button>
+<button class="menu-button" id="opt1">View State Abbreviations</button>
+<button class="menu-button" id="opt2">View State Electoral Votes</button>
+<button class="menu-button" id="opt3">Hide State Labels</button>
 
 <script>
     // Time
