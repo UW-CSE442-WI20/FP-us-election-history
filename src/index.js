@@ -291,6 +291,11 @@ function sliderChange(val){
       popMapWithYear(currentYear);
       infoDiv.innerHTML = textMap.get(currentYear);
       bigContainer.style.display = "block";
+      if (currentYear < 1976) {
+        bigContainer.style.display = "none";
+        } else {
+        bigContainer.style.display = "block";
+    }   
   }
 }
 
