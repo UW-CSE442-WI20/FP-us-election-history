@@ -1,9 +1,9 @@
 {
   "candidates": {
-    "democrat": "Humphrey",
-    "republican": "Nixon",
-    "other": "Wallace",
-    "american independent": "Wallace"
+    "democrat": "Hubert Humphrey",
+    "republican": "Richard Nixon",
+    "other": "George Wallace",
+    "american independent": "George Wallace"
   },
   "votes": {
     "AK": {

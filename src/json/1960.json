@@ -1,9 +1,9 @@
 {
   "candidates": {
-    "democrat": "Kennedy",
-    "republican": "Nixon",
-    "other": "Byrd",
-    "southern democrat": "Byrd"
+    "democrat": "John F. Kennedy",
+    "republican": "Richard Nixon",
+    "other": "Harry F. Byrd",
+    "southern democrat": "Harry F. Byrd"
   },
   "votes": {
     "AK": {

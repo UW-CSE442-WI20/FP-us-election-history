@@ -130,7 +130,9 @@ for (var i = 1904; i < 2016; i += 4) {
             earlyWinners[d] = winner;
             currYearElectorates[d] = value;
         });
-    candidateMap.set(i, earlierMap);
+    //if (i < 1976) {
+        candidateMap.set(i, earlierMap);
+    //}*/
     stateWinners[i] = earlyWinners;
     stateValues.set(i, currYearElectorates);
 }
@@ -226,18 +228,18 @@ function sliderChange(val){
       d3.select('#title-container').text("US Election Results in "+ currentYear);
       publicYear = currentYear;
       d3.select('#key-title').text("Major Candidates (Winner in Bold)");
-      d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name);
-      d3.select('#democrat-container').text(candidateMap.get(currentYear).get("democrat").name);
       //console.log('made a call to on change, about to populate map');
       // lost popular vote ut won election
       if (currentYear == 2000 || currentYear == 2016) {
-            d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name + "*");
-            d3.select('#republican-container').style("font-weight", 900);
-            d3.select('#democrat-container').style("font-weight", 100);
+            d3.select('#democrat-container').text(candidateMap.get(currentYear).get("democrat").name);
+            d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name.toUpperCase() + "*");
+            d3.select('#republican-container').style("font-weight", "bold");
+            d3.select('#democrat-container').style("font-weight", "lighter");
             d3.select('#asterisk-container').text('* = Lost Popular Vote').style("background-color", "#FFFFFF")
             .style("outline", "0px").style("height", "20px");
       } else if (currentYear == 1924) { // coloring the third paarty for specific years where they got votes
-            d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name);
+            d3.select('#democrat-container').text(candidateMap.get(currentYear).get("democrat").name);
+            d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name.toUpperCase());
             d3.select('#republican-container').style("font-weight", 900);
             d3.select('#democrat-container').style("font-weight", 100);
             d3.select('#asterisk-container').text(candidateMap.get(currentYear).get("progressive").name)
@@ -245,32 +247,41 @@ function sliderChange(val){
             .style("height", "50px");
       } else if (currentYear == 1912) {
             d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name);
+            d3.select('#democrat-container').text(candidateMap.get(currentYear).get("democrat").name.toUpperCase());
             d3.select('#republican-container').style("font-weight", 100);
             d3.select('#democrat-container').style("font-weight", 900);
             d3.select('#asterisk-container').text(candidateMap.get(currentYear).get("progressive").name)
             .style("outline", "2px solid #000000").style("background-color", "#88FF88").style("font-weight", 100)
             .style("height", "50px");
-      } else if (currentYear == 1948 || currentYear == 1960) {
+      } else if (currentYear == 1948 || currentYear == 1960) {    
+            d3.select('#democrat-container').text(candidateMap.get(currentYear).get("democrat").name.toUpperCase());
             d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name);
             d3.select('#republican-container').style("font-weight", 100);
             d3.select('#democrat-container').style("font-weight", 900);
             d3.select('#asterisk-container').text(candidateMap.get(currentYear).get("other").name)
             .style("outline", "2px solid #000000").style("background-color", "#FFB020").style("font-weight", 100)
             .style("height", "50px");
-      } /*else if (currentYear == 1948 || currentYear == 1960) {
-            d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name);
+      } else if (currentYear == 1968) {
+            d3.select('#democrat-container').text(candidateMap.get(currentYear).get("democrat").name);
+            d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name.toUpperCase());
             d3.select('#republican-container').style("font-weight", 900);
             d3.select('#democrat-container').style("font-weight", 100);
             d3.select('#asterisk-container').text(candidateMap.get(currentYear).get("other").name)
-            .style("outline", "2px solid #000000").style("background-color", "#FFB020").style("font-weight", 100);
-      }*/
+            .style("outline", "2px solid #000000").style("background-color", "#FFB020").style("font-weight", 100)
+            .style("height", "50px");
+      }
       else if(candidateMap.get(currentYear).get("republican").votes > candidateMap.get(currentYear).get("democrat").votes){
+            //console.log("HI");
+            d3.select('#democrat-container').text(candidateMap.get(currentYear).get("democrat").name);
+            d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name.toUpperCase());
             d3.select('#republican-container').style("font-weight", 900);
             d3.select('#democrat-container').style("font-weight", 100);
             d3.select('#asterisk-container').text('').style("background-color", "#FFFFFF").style("outline", "0px")
             .style("height", "10px");
 
       } else {
+            d3.select('#democrat-container').text(candidateMap.get(currentYear).get("democrat").name.toUpperCase());
+            d3.select('#republican-container').text(candidateMap.get(currentYear).get("republican").name);   
             d3.select('#democrat-container').style("font-weight", 900);
             d3.select('#republican-container').style("font-weight", 100);
             d3.select('#asterisk-container').text('').style("background-color", "#FFFFFF").style("outline", "0px")
