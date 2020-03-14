@@ -87,7 +87,7 @@
         */
         #tooltip tr td:nth-child(4){
             text-align:right;
-            margin-left:5;
+            margin-left:5px;
         }
 
         #title-container {
@@ -135,7 +135,6 @@
             text-align: right;
             vertical-align: right;
             float: center;
-            height: 10px;
             font-family: 'Roboto', sans-serif;
         }
 
@@ -166,7 +165,6 @@
         }
 
 		#color-gradient {
-            width: 500px;
             height: 10px;
             background: linear-gradient(to right, #0015BC, white, #E9141D);
         }
@@ -179,19 +177,23 @@
             font-family: 'Roboto', sans-serif;
         }
 
-        #container {
+        .legend-container {
             display: flex;
             flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
         }
 
         #rep-text {
             margin-left: 223px;
 		}
 
-		#container {
-			display: flex;
-			flex-direction: row;
-		}
+        #big-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
 
         #writeup {
             display: table;
@@ -230,7 +232,7 @@
             integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
             crossorigin="anonymous"
     />
-    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,200,400,900&display=swap" rel="stylesheet">
 </head>
 </html>
 <body>
@@ -249,29 +251,32 @@
 			<div id="info" >The 1976 United States presidential election was the 48th quadrennial presidential election. It was held on Tuesday, November 2, 1976. Democrat Jimmy Carter of Georgia defeated incumbent Republican President Gerald Ford from Michigan. Carter's win represented the lone Democratic victory in a presidential election held between 1968 and 1992.</div>
 		</div>
     </div>
+
+    <div class="row align-items-center">
+        <div class="col-sm-2"><p id="value-time"></p></div>
+        <div class="col-12">
+            <div id="big-container">
+                <div class="legend-container">
+                    <div>Percent Democrat</div>
+                    <div id="rep-text">Percent Republican</div>
+                </div>
+                <div class="legend-container" id="legend-numbers">
+                    <span>>65</span><span>64</span><span>62</span><span>60</span><span>58</span><span>56</span><span>54</span><span>52</span><span>50</span>
+                    <span>50</span><span>52</span><span>54</span><span>56</span><span>58</span><span>60</span><span>62</span><span>64</span><span>>65</span>
+                </div>
+                <div id="color-gradient"></div>
+                <div id="slider-time"></div>
+            </div>
+
+        </div>
+    </div>
+
     <script src="uStates.js"></script> <!-- creates uStates. -->
     <script src="https://d3js.org/d3.v5.min.js"></script>
-
 </div>
 
 <script src="https://unpkg.com/d3-simple-slider"></script>
 
-<div class="row align-items-center">
-	<div class="col-sm-2"><p id="value-time"></p></div>
-    <div class="col-sm">
-		<div id="big-container">
-			<div id="container">
-				<div>Percent Democrat</div>
-				<div id="rep-text">Percent Republican</div>
-			</div>
-			<div id="container">
-				<div>>65 64 62 60 58 56 54 52 50 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 50 52 54 56 58 60 62 64 >65</div>
-			</div>
-			<div id="color-gradient"></div>
-		</div>
-        <div id="slider-time"></div>
-    </div>
-</div>
 <!--<button id='writeup'></button>-->
 <button class="menu-button" id="play">Play From Beginning</button>
 <button class="menu-button" id="play2">Play From Here</button>
@@ -308,8 +313,9 @@
     var gTime = d3
         .select('div#slider-time')
         .append('svg')
-        .attr('width', 900)
-        .attr('height', 100)
+        // .attr('width', 900)
+        // .attr('height', 100)
+        .attr('viewBox', "0 0 825 100")
         .append('g')
         .attr('transform', 'translate(40,40)');
 
