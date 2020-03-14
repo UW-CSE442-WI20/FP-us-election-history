@@ -289,19 +289,8 @@ function sliderChange(val){
       }
       //populateMap();
       popMapWithYear(currentYear);
-      // no info yet for pre 76
-      /*if (currentYear > 1972) {
-            infoDiv.innerHTML = textMap.get(currentYear);
-        } else {
-            infoDiv.innerHTML = "";
-        }*/
-    infoDiv.innerHTML = textMap.get(currentYear);
-    if (currentYear < 1976) {
-        bigContainer.style.display = "none";
-    } else {
-        bigContainer.style.display = "block";
-    }
-
+      infoDiv.innerHTML = textMap.get(currentYear);
+      bigContainer.style.display = "block";
   }
 }
 
