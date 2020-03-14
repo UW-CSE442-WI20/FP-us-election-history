@@ -1,9 +1,9 @@
 {
   "candidates": {
-    "democrat": "Truman",
-    "republican": "Dewey",
-    "other": "Thurmond",
-    "Dixiecrat": "Thurmond"
+    "democrat": "Harry S. Truman",
+    "republican": "Thomas E. Dewey",
+    "other": "Strom Thurmond",
+    "Dixiecrat": "Strom Thurmond"
   },
   "votes": {
     "AK": {
